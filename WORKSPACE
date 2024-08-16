@@ -4,20 +4,6 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:utils.bzl", "maybe")
 
 http_archive(
-    name = "hedron_compile_commands",
-    url = "https://github.com/hedronvision/bazel-compile-commands-extractor/archive/1e08f8e0507b6b6b1f4416a9a22cf5c28beaba93.tar.gz",
-    strip_prefix = "bazel-compile-commands-extractor-1e08f8e0507b6b6b1f4416a9a22cf5c28beaba93",
-)
-load("@hedron_compile_commands//:workspace_setup.bzl", "hedron_compile_commands_setup")
-hedron_compile_commands_setup()
-load("@hedron_compile_commands//:workspace_setup_transitive.bzl", "hedron_compile_commands_setup_transitive")
-hedron_compile_commands_setup_transitive()
-load("@hedron_compile_commands//:workspace_setup_transitive_transitive.bzl", "hedron_compile_commands_setup_transitive_transitive")
-hedron_compile_commands_setup_transitive_transitive()
-load("@hedron_compile_commands//:workspace_setup_transitive_transitive_transitive.bzl", "hedron_compile_commands_setup_transitive_transitive_transitive")
-hedron_compile_commands_setup_transitive_transitive_transitive()
-
-http_archive(
     name = "rules_python",
     sha256 = "5868e73107a8e85d8f323806e60cad7283f34b32163ea6ff1020cf27abef6036",
     strip_prefix = "rules_python-0.25.0",
