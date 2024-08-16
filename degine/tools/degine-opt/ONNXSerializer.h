@@ -19,7 +19,9 @@ public:
       return false;
     }
     degine::onnx::ModelProto model;
-    // TODO: impl
+    if (!Translate(model, module)) {
+      return false;
+    }
 
     if (!model.SerializeToOstream(&ofs)) {
       llvm::errs() << "Error can not serialize to ostream" << '\n';
@@ -29,5 +31,10 @@ public:
   }
 
 private:
+  bool Translate(degine::onnx::ModelProto &model, mlir::ModuleOp module) {
+    // TODO: impl
+    return false;
+  }
+
   std::string fname_;
 };
