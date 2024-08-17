@@ -4,7 +4,6 @@
 #include "TorchToMLIR.h"
 
 namespace degine {
-namespace torch {
 
 mlir::OwningOpRef<mlir::ModuleOp>
 convertTorchToMLIR(mlir::MLIRContext &context,
@@ -13,5 +12,4 @@ convertTorchToMLIR(mlir::MLIRContext &context,
   return nullptr;
 }
 
-} // namespace torch
 } // namespace degine
