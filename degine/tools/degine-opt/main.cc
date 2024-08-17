@@ -6,6 +6,7 @@
 #include "llvm/Support/CommandLine.h"
 
 #include "ONNXSerializer.h"
+#include "degine/torch/TorchToMLIR.h"
 #include "utils.h"
 
 llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,

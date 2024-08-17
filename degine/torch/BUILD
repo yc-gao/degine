@@ -3,7 +3,7 @@ package(
 )
 
 cc_library(
-    name = "demo",
+    name = "MLIRTorchToMLIR",
     srcs = glob(["*.cc", "*.cpp"]),
     hdrs = glob(["*.h"]),
     deps = [

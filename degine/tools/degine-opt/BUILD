@@ -3,6 +3,7 @@ cc_binary(
     srcs = glob(["*.cc", "*.h"]),
     deps = [
         "//degine/proto:onnx_cc_proto",
+        "//degine/torch:MLIRTorchToMLIR",
         "@torch//:torch",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:IR",
