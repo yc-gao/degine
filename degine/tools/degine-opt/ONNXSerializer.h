@@ -163,9 +163,11 @@ private:
     return flag;
   }
   bool Translate(degine::onnx::ModelProto &model, mlir::func::FuncOp op) {
+    // TODO: impl
     return false;
   }
   bool Translate(degine::onnx::ModelProto &model, mlir::gpu::BinaryOp op) {
+    // TODO: impl
     return false;
   }
 
