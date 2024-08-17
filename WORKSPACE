@@ -62,7 +62,7 @@ http_archive(
 http_archive(
     name = "torch-mlir-raw",
     build_file_content = "# empty",
-    # sha256 = "3de03bf04fda933e22ff2b04d4f88194f175c846abc20856cd7d41d4e9fd342e",
+    sha256 = "cdacc7e16ea882fea0a330961685c9d78f536e84f23add4f5e47ceec6a7df5dd",
     strip_prefix = "torch-mlir-56a663690ccd378182ea7dbf95b7b2a54463e3e9",
     url = "https://github.com/llvm/torch-mlir/archive/56a663690ccd378182ea7dbf95b7b2a54463e3e9.zip",
 )
