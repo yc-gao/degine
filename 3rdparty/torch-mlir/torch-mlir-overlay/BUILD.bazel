@@ -163,6 +163,14 @@ gentbl_cc_library(
             ["-gen-pass-decls"],
             "include/torch-mlir/Dialect/Torch/Transforms/Passes.h.inc",
         ),
+        (
+            ["-gen-pass-capi-header"],
+            "include/torch-mlir/Dialect/Torch/Transforms/Transforms.capi.h.inc",
+        ),
+        (
+            ["-gen-pass-capi-impl"],
+            "include/torch-mlir/Dialect/Torch/Transforms/Transforms.capi.cpp.inc",
+        ),
     ],
     tblgen = "@llvm-project//mlir:mlir-tblgen",
     td_file = "include/torch-mlir/Dialect/Torch/Transforms/Passes.td",
@@ -905,6 +913,20 @@ cc_library(
         "@stablehlo//:linalg_passes",
         "@stablehlo//:stablehlo_passes",
     ],
+)
+
+cc_library(
+    name = "TorchCAPI",
+    includes = ["include"],
+    hdrs = glob(["include/torch-mlir-c/**/*.h"]),
+    srcs = glob(["lib/CAPI/*.cpp"]),
+    deps = [
+        ":TorchMLIRTorchDialect",
+        ":TorchMLIRInitAll",
+        ":TorchMLIRTorchPasses",
+        "@llvm-project//mlir:CAPIIR",
+        "@llvm-project//mlir:Support",
+    ]
 )
 
 # tools
