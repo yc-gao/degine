@@ -1,6 +1,7 @@
 def _impl(repository_ctx):
     self_dir = repository_ctx.path(
         Label("//3rdparty/torch-mlir:configure.bzl")).dirname
+    script_path = self_dir.get_child("overlay_directories.py")
     overlay_path = self_dir.get_child("torch-mlir-overlay")
 
     repository_ctx.download_and_extract(
@@ -9,7 +10,7 @@ def _impl(repository_ctx):
         sha256=repository_ctx.attr.sha256
     )
 
-    cmd = ["cp", "-af", "-T", overlay_path, "."]
+    cmd = [script_path, "--overlay", overlay_path, "."]
     exec_result = repository_ctx.execute(cmd, timeout=20)
     if exec_result.return_code != 0:
         fail(("Failed to execute overlay script: '{cmd}'\n" +
