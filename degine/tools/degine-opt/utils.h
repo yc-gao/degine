@@ -19,7 +19,7 @@ LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
   llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> fileOrErr =
       llvm::MemoryBuffer::getFileOrSTDIN(inputFilename);
   if (auto ec = fileOrErr.getError()) {
-    llvm::errs() << "Error could not open input file " << ec.message() << '\n';
+    llvm::errs() << "Error can not open input file " << ec.message() << '\n';
     return nullptr;
   }
 
@@ -27,7 +27,7 @@ LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
   sourceMgr.AddNewSourceBuffer(std::move(*fileOrErr), llvm::SMLoc());
   auto module = mlir::parseSourceFile<mlir::ModuleOp>(sourceMgr, &context);
   if (!module) {
-    llvm::errs() << "Error can't load file " << inputFilename << '\n';
+    llvm::errs() << "Error can not parse file " << inputFilename << '\n';
     return nullptr;
   }
   return module;
