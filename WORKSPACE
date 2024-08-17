@@ -75,7 +75,7 @@ http_archive(
     build_file_content = """
 cc_library(
     name = "torch",
-    srcs = glob(["lib/*.so", "lib/*.a"], exclude = ["lib/libnnapi_backend.so"]),
+    srcs = ["lib/libc10.so", "lib/libtorch_cpu.so"],
     hdrs = glob(["include/**/*.h"]),
     includes = ["include", "include/torch/csrc/api/include"],
     visibility = ["//visibility:public"],
