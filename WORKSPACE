@@ -38,7 +38,7 @@ http_archive(
 http_archive(
     name = "llvm-raw",
     build_file_content = "# empty",
-    # sha256 = "7b252d54d93f583e32e601f2dcac3d54201231e140ffe65cc91bf089bb9eefa9",
+    sha256 = "98932f826a6f4b3c0bb929c8b28b7278232273bee7667a3a31019cab917372a3",
     strip_prefix = "llvm-project-585523750e2bbe374d1cb3bf4ff9d53de29b9593",
     url = "https://github.com/llvm/llvm-project/archive/585523750e2bbe374d1cb3bf4ff9d53de29b9593.zip",
 )
@@ -49,7 +49,7 @@ llvm_configure(name = "llvm-project")
 # torch-mlir begin
 http_archive(
     name = "stablehlo",
-    # sha256 = "a469ecc3d6747f9effdc1c7813568953dd1dc30070ca8f4f6f8a4d405e8c687e",
+    sha256 = "e9e2456e352a1169345bf128a7baab2232b33ae111ecc59a6b356f2aaac0a71f",
     strip_prefix = "stablehlo-c28d55e91b4a5daaff18a33ce7e9bbd0f171256a",
     url = "https://github.com/openxla/stablehlo/archive/c28d55e91b4a5daaff18a33ce7e9bbd0f171256a.zip",
 )
@@ -59,15 +59,13 @@ http_archive(
     strip_prefix = "buildtools-4.2.2",
     url = "https://github.com/bazelbuild/buildtools/archive/refs/tags/4.2.2.tar.gz",
 )
-http_archive(
-    name = "torch-mlir-raw",
-    build_file_content = "# empty",
+load("//3rdparty/torch-mlir:configure.bzl", "torch_mlir_configure")
+torch_mlir_configure(
+    name = "torch-mlir",
     sha256 = "cdacc7e16ea882fea0a330961685c9d78f536e84f23add4f5e47ceec6a7df5dd",
     strip_prefix = "torch-mlir-56a663690ccd378182ea7dbf95b7b2a54463e3e9",
     url = "https://github.com/llvm/torch-mlir/archive/56a663690ccd378182ea7dbf95b7b2a54463e3e9.zip",
 )
-load("@torch-mlir-raw//utils/bazel:configure.bzl", "torch_mlir_configure")
-torch_mlir_configure(name = "torch-mlir")
 # torch-mlir end
 
 http_archive(
