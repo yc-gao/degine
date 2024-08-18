@@ -1,9 +1,9 @@
 cc_binary(
-    name = "degine-opt",
+    name = "degine_opt",
     srcs = glob(["*.cc", "*.h"]),
     deps = [
         "//degine/proto:onnx_cc_proto",
-        "//degine/Conversion/TorchToMLIR",
+        "//degine/conversion/TorchToMLIR",
         "@torch//:torch",
         "@llvm-project//llvm:Support",
         "@llvm-project//mlir:IR",

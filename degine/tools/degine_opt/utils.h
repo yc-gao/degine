@@ -11,8 +11,13 @@
 #include "mlir/Parser/Parser.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Transforms/Passes.h"
+#include "torch/csrc/jit/serialization/import.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/SourceMgr.h"
+
+inline torch::jit::Module LoadTorch(const std::string &fname) {
+  return torch::jit::load(fname);
+}
 
 inline mlir::OwningOpRef<mlir::ModuleOp>
 LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
