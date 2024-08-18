@@ -51,9 +51,8 @@ def parse_args():
 def main():
     args = parse_args()
 
-    model = AlexNet().eval()
-    x = torch.rand(1, 3, 224, 224)
-    model = torch.jit.trace(model, x)
+    model = AlexNet()
+    model = torch.jit.script(model)
 
     if args.output:
         model.save(args.output)
