@@ -8,6 +8,7 @@ namespace degine {
 mlir::OwningOpRef<mlir::ModuleOp>
 convertTorchToMLIR(mlir::MLIRContext &context,
                    const ::torch::jit::Module &jitModule) {
+  jitModule.dump(true, false, false);
   // TODO: impl
   return nullptr;
 }
