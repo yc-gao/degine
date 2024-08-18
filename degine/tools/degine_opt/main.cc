@@ -3,6 +3,7 @@
 #include "mlir/InitAllDialects.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Target/LLVMIR/Dialect/All.h"
+#include "stablehlo/dialect/Register.h"
 #include "torch-mlir/InitAll.h"
 #include "llvm/Support/CommandLine.h"
 
@@ -29,9 +30,10 @@ int main(int argc, char *argv[]) {
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);
+  mlir::stablehlo::registerAllDialects(registry);
   mlir::torch::registerAllDialects(registry);
-  mlir::registerAllGPUToLLVMIRTranslations(registry);
   mlir::MLIRContext context(std::move(registry));
+  context.loadAllAvailableDialects();
 
   mlir::OwningOpRef<mlir::ModuleOp> module;
   if (inputFormat == Format::TORCH) {
@@ -48,6 +50,9 @@ int main(int argc, char *argv[]) {
   }
 
   mlir::PassManager pm(module.get()->getName());
+  if (inputFormat == Format::TORCH) {
+    degine::addPassesTorchToLinalg(pm);
+  }
   addPassesLinalgToGpu(pm);
   if (mlir::failed(pm.run(*module))) {
     return 1;
