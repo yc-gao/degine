@@ -1,5 +1,5 @@
 #include "mlir/IR/BuiltinOps.h"
-#include "torch/csrc/jit/ir/ir.h"
+#include "torch/csrc/jit/serialization/import.h"
 
 #include "TorchToMLIR.h"
 
