@@ -6,6 +6,7 @@
 #include "mlir/CAPI/IR.h"
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/BuiltinOps.h"
+#include "torch-mlir/Dialect/TorchConversion/Transforms/Passes.h"
 #include "torch/csrc/jit/serialization/import.h"
 
 #include "class_annotator.h"
@@ -62,6 +63,8 @@ convertTorchToMLIR(mlir::MLIRContext &context,
 }
 
 void addPassesTorchToLinalg(mlir::PassManager &pm) {
+  mlir::torch::TorchConversion::
+      createTorchBackendToLinalgOnTensorsBackendPipeline(pm);
   // TODO: impl
 }
 
