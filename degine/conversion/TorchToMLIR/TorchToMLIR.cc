@@ -39,7 +39,15 @@ public:
         builder.create<mlir::ModuleOp>(builder.getUnknownLoc());
 
     torch_mlir::ClassAnnotator dummyAnnotator;
-    // TODO: impl ClassAnnotator
+    dummyAnnotator.exportNone(*jitModule.type());
+    dummyAnnotator.exportPath(*jitModule.type(), {"forward"});
+    // TODO: update
+    torch_mlir::ArgAnnotation argAnnotation;
+    argAnnotation.shape = {1, 3, 224, 224};
+    argAnnotation.dtype = c10::ScalarType::Float;
+    argAnnotation.hasValueSemantics = true;
+    dummyAnnotator.annotateArgs(*jitModule.type(), {"forward"},
+                                {torch_mlir::ArgAnnotation{}, argAnnotation});
     torch_mlir::ImportOptions importOptions;
     importOptions.ignoreExistingTensorShapesAndDtypes = false;
 
