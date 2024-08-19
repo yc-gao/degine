@@ -41,6 +41,7 @@ public:
     torch_mlir::ClassAnnotator dummyAnnotator;
     torch_mlir::ClassAnnotator *classAnnotator = &dummyAnnotator;
     torch_mlir::ImportOptions importOptions;
+    importOptions.ignoreExistingTensorShapesAndDtypes = false;
 
     torch_mlir::importIValue(
         jitModule._ivalue(), mlirModuleGetBody(wrap(module)),
