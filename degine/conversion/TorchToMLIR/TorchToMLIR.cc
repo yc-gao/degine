@@ -39,13 +39,13 @@ public:
         builder.create<mlir::ModuleOp>(builder.getUnknownLoc());
 
     torch_mlir::ClassAnnotator dummyAnnotator;
-    torch_mlir::ClassAnnotator *classAnnotator = &dummyAnnotator;
+    // TODO: impl ClassAnnotator
     torch_mlir::ImportOptions importOptions;
     importOptions.ignoreExistingTensorShapesAndDtypes = false;
 
     torch_mlir::importIValue(
         jitModule._ivalue(), mlirModuleGetBody(wrap(module)),
-        mlirModuleGetContext(wrap(module)), *classAnnotator, importOptions);
+        mlirModuleGetContext(wrap(module)), dummyAnnotator, importOptions);
     return module;
   }
 
@@ -71,7 +71,6 @@ void addPassesTorchToLinalg(mlir::PassManager &pm) {
                                                                     options);
   mlir::torch::TorchConversion::
       createTorchBackendToLinalgOnTensorsBackendPipeline(pm);
-  // TODO: impl
 }
 
 } // namespace degine
