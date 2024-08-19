@@ -33,6 +33,7 @@ int main(int argc, char *argv[]) {
   mlir::stablehlo::registerAllDialects(registry);
   mlir::torch::registerAllDialects(registry);
   mlir::torch::registerAllExtensions(registry);
+  mlir::registerAllGPUToLLVMIRTranslations(registry);
   mlir::MLIRContext context(std::move(registry));
   context.loadAllAvailableDialects();
 
