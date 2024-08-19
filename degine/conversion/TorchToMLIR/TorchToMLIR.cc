@@ -63,6 +63,11 @@ convertTorchToMLIR(mlir::MLIRContext &context,
 }
 
 void addPassesTorchToLinalg(mlir::PassManager &pm) {
+  mlir::torch::Torch::TorchLoweringPipelineOptions options;
+  options.backendLegalOps = {"aten.flatten.using_ints",
+                             "aten.adaptive_avg_pool1d"};
+  mlir::torch::Torch::createTorchScriptModuleToTorchBackendPipeline(pm,
+                                                                    options);
   mlir::torch::TorchConversion::
       createTorchBackendToLinalgOnTensorsBackendPipeline(pm);
   // TODO: impl

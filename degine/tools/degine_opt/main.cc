@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
   mlir::registerAllDialects(registry);
   mlir::stablehlo::registerAllDialects(registry);
   mlir::torch::registerAllDialects(registry);
+  mlir::torch::registerAllExtensions(registry);
   mlir::MLIRContext context(std::move(registry));
   context.loadAllAvailableDialects();
 

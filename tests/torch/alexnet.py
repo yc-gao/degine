@@ -52,7 +52,7 @@ def main():
     args = parse_args()
 
     model = AlexNet()
-    model = torch.jit.script(model)
+    model = torch.jit.trace(model, torch.rand(1, 3, 224, 224))
 
     if args.output:
         model.save(args.output)
