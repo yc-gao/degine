@@ -11,6 +11,7 @@
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Target/LLVMIR/Dialect/All.h"
 #include "mlir/Transforms/Passes.h"
+#include "stablehlo/conversions/linalg/transforms/Passes.h"
 #include "stablehlo/dialect/Register.h"
 #include "torch-mlir/Dialect/Torch/Transforms/Passes.h"
 #include "torch-mlir/Dialect/TorchConversion/Transforms/Passes.h"
@@ -51,14 +52,14 @@ LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
   return module;
 }
 
-void addPassesTorchScriptToLinalg(mlir::PassManager &pm) {
+void addPassesTorchScriptToStablehlo(mlir::PassManager &pm) {
   mlir::torch::Torch::TorchLoweringPipelineOptions options;
   options.backendLegalOps = {"aten.flatten.using_ints",
                              "aten.adaptive_avg_pool1d"};
   mlir::torch::Torch::createTorchScriptModuleToTorchBackendPipeline(pm,
                                                                     options);
-  mlir::torch::TorchConversion::
-      createTorchBackendToLinalgOnTensorsBackendPipeline(pm);
+  mlir::torch::TorchConversion::createTorchBackendToStablehloBackendPipeline(
+      pm, {});
 }
 
 void addPassesLinalgToGpu(mlir::PassManager &pm) {
@@ -125,7 +126,8 @@ int main(int argc, char *argv[]) {
   }
 
   mlir::PassManager pm(module.get()->getName());
-  addPassesTorchScriptToLinalg(pm);
+  addPassesTorchScriptToStablehlo(pm);
+  pm.addPass(mlir::stablehlo::createStablehloLegalizeToLinalgPass());
   addPassesLinalgToGpu(pm);
   if (mlir::failed(pm.run(*module))) {
     llvm::errs() << "Error run PassManager failed\n";
