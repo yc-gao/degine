@@ -12,10 +12,14 @@
 #include "class_annotator.h"
 #include "import_options.h"
 
+llvm::cl::OptionCategory degineCategory("degine options");
+
 llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
-                                         llvm::cl::value_desc("filename"));
+                                         llvm::cl::value_desc("filename"),
+                                         llvm::cl::cat(degineCategory));
 llvm::cl::opt<std::string> outputFilename("o", llvm::cl::value_desc("filename"),
-                                          llvm::cl::Required);
+                                          llvm::cl::Required,
+                                          llvm::cl::cat(degineCategory));
 
 void InitTorchConvertOptions(torch_mlir::ClassAnnotator &annotator,
                              torch_mlir::ImportOptions &options,

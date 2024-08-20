@@ -21,11 +21,16 @@
 
 #include "ONNXSerializer.h"
 
-llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
-                                         llvm::cl::value_desc("filename"));
-llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("output.onnx"));
+llvm::cl::OptionCategory degineCategory("degine options");
 
-llvm::cl::opt<bool> dumpMLIR("dump", llvm::cl::init(false));
+llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
+                                         llvm::cl::value_desc("filename"),
+                                         llvm::cl::cat(degineCategory));
+llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("output.onnx"),
+                                          llvm::cl::cat(degineCategory));
+
+llvm::cl::opt<bool> dumpMLIR("dump", llvm::cl::init(false),
+                             llvm::cl::cat(degineCategory));
 
 inline mlir::OwningOpRef<mlir::ModuleOp>
 LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
