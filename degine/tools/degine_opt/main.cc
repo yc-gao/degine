@@ -1,6 +1,7 @@
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/InitAllDialects.h"
+#include "mlir/InitAllExtensions.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Target/LLVMIR/Dialect/All.h"
 #include "stablehlo/dialect/Register.h"
@@ -13,9 +14,10 @@
 #include "utils.h"
 
 llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
-                                         llvm::cl::Required,
                                          llvm::cl::value_desc("filename"));
 llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("output.onnx"));
+
+llvm::cl::opt<bool> dumpMLIR("dump", llvm::cl::init(false));
 
 void addPassesTorchScriptToLinalg(mlir::PassManager &pm) {
   mlir::torch::Torch::TorchLoweringPipelineOptions options;
@@ -34,6 +36,7 @@ int main(int argc, char *argv[]) {
   mlir::registerAllDialects(registry);
   mlir::stablehlo::registerAllDialects(registry);
   mlir::torch::registerAllDialects(registry);
+  mlir::registerAllExtensions(registry);
   mlir::registerAllGPUToLLVMIRTranslations(registry);
   mlir::MLIRContext context(std::move(registry));
 
@@ -49,6 +52,10 @@ int main(int argc, char *argv[]) {
   if (mlir::failed(pm.run(*module))) {
     llvm::errs() << "Error run PassManager failed\n";
     return 1;
+  }
+
+  if (dumpMLIR) {
+    module->dump();
   }
 
   ONNXSerializer serializer(outputFilename.getValue());
