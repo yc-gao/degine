@@ -162,6 +162,7 @@ private:
                   std::copy(int_attr.value_begin<std::uint64_t>(),
                             int_attr.value_end<std::uint64_t>(),
                             uint64_data.begin());
+                  return true;
                 }
               }
 
