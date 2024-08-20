@@ -62,6 +62,10 @@ void addPassesTorchScriptToStablehlo(mlir::PassManager &pm) {
       pm, {});
 }
 
+void addPassesStablehloToLinalg(mlir::PassManager &pm) {
+  pm.addPass(mlir::stablehlo::createStablehloLegalizeToLinalgPass());
+}
+
 void addPassesLinalgToGpu(mlir::PassManager &pm) {
   // Linalg To Parallel Loops
   pm.addPass(mlir::bufferization::createEmptyTensorEliminationPass());
@@ -127,7 +131,7 @@ int main(int argc, char *argv[]) {
 
   mlir::PassManager pm(module.get()->getName());
   addPassesTorchScriptToStablehlo(pm);
-  pm.addPass(mlir::stablehlo::createStablehloLegalizeToLinalgPass());
+  addPassesStablehloToLinalg(pm);
   addPassesLinalgToGpu(pm);
   if (mlir::failed(pm.run(*module))) {
     llvm::errs() << "Error run PassManager failed\n";
