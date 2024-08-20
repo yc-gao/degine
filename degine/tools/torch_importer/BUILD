@@ -1,5 +1,5 @@
 cc_binary(
-    name = "degine_importer",
+    name = "torch_importer",
     srcs = glob(["*.cc", "*.cpp", "*.h"]),
     deps = [
         "@torch//:torch",
