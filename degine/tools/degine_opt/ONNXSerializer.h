@@ -7,6 +7,7 @@
 #include "mlir/Dialect/GPU/IR/GPUDialect.h"
 #include "mlir/Dialect/MemRef/IR/MemRef.h"
 #include "mlir/IR/BuiltinOps.h"
+#include "mlir/IR/Operation.h"
 #include "llvm/ADT/TypeSwitch.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/ToolOutputFile.h"
@@ -169,9 +170,24 @@ private:
             .Default(false);
     return flag;
   }
-  bool Translate(degine::onnx::ModelProto &model, mlir::func::FuncOp op) {
-    // TODO: impl
-    return false;
+  bool Translate(degine::onnx::ModelProto &model, mlir::func::FuncOp func_op) {
+    for (auto &&op : func_op.getOps()) {
+      // TODO: impl
+      bool flag = llvm::TypeSwitch<mlir::Operation *, bool>(&op)
+                      .Case([&](mlir::memref::GetGlobalOp op) { return false; })
+                      .Case([&](mlir::memref::AllocOp op) { return false; })
+                      .Case([&](mlir::memref::CopyOp op) { return false; })
+                      .Case([&](mlir::gpu::LaunchFuncOp op) { return false; })
+                      // ignore
+                      .Case([&](mlir::arith::ConstantOp) { return true; })
+                      .Case([&](mlir::memref::SubViewOp) { return true; })
+                      .Case([&](mlir::memref::DeallocOp) { return true; })
+                      .Default(false);
+      if (!flag) {
+        return false;
+      }
+    }
+    return true;
   }
   bool Translate(degine::onnx::ModelProto &model, mlir::gpu::BinaryOp op) {
     // TODO: impl
