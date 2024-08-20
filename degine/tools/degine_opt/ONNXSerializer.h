@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <fstream>
 #include <string>
 
 #include "mlir/Dialect/Func/IR/FuncOps.h"
@@ -9,6 +8,8 @@
 #include "mlir/Dialect/MemRef/IR/MemRef.h"
 #include "mlir/IR/BuiltinOps.h"
 #include "llvm/ADT/TypeSwitch.h"
+#include "llvm/Support/FileSystem.h"
+#include "llvm/Support/ToolOutputFile.h"
 #include "llvm/Support/raw_ostream.h"
 
 #include "degine/proto/onnx.pb.h"
@@ -18,20 +19,26 @@ public:
   ONNXSerializer(std::string fname) : fname_(std::move(fname)) {}
 
   bool Serialize(mlir::ModuleOp module) {
-    std::ofstream ofs(fname_, std::ios::binary);
-    if (!ofs.is_open()) {
-      llvm::errs() << "Error can not open file" << '\n';
+    std::error_code EC;
+    llvm::ToolOutputFile out(fname_, EC, llvm::sys::fs::OF_None);
+    if (EC) {
+      llvm::errs() << "Error can not open file " << fname_
+                   << ", message: " << EC.message() << '\n';
       return false;
     }
     degine::onnx::ModelProto model;
     if (!Translate(model, module)) {
+      llvm::errs() << "Error translate mlir to onnx failed" << '\n';
       return false;
     }
 
-    if (!model.SerializeToOstream(&ofs)) {
-      llvm::errs() << "Error can not serialize to ostream" << '\n';
+    std::string buf;
+    if (!model.SerializeToString(&buf)) {
+      llvm::errs() << "Error can not serialize proto to buf" << '\n';
       return false;
     }
+    out.os() << buf;
+    out.keep();
     return true;
   }
 
