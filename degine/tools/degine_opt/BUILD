@@ -10,6 +10,5 @@ cc_binary(
         "@stablehlo//:register",
         "@torch-mlir//:TorchMLIRInitAll",
         "//degine/proto:onnx_cc_proto",
-        "@torch//:torch",
     ]
 )

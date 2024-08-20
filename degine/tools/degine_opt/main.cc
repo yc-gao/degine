@@ -1,23 +1,50 @@
+#include "mlir/Conversion/Passes.h"
+#include "mlir/Dialect/Bufferization/Pipelines/Passes.h"
+#include "mlir/Dialect/Bufferization/Transforms/Passes.h"
+#include "mlir/Dialect/GPU/Transforms/Passes.h"
+#include "mlir/Dialect/Linalg/Passes.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/InitAllDialects.h"
 #include "mlir/InitAllExtensions.h"
+#include "mlir/Parser/Parser.h"
 #include "mlir/Pass/PassManager.h"
 #include "mlir/Target/LLVMIR/Dialect/All.h"
+#include "mlir/Transforms/Passes.h"
 #include "stablehlo/dialect/Register.h"
 #include "torch-mlir/Dialect/Torch/Transforms/Passes.h"
 #include "torch-mlir/Dialect/TorchConversion/Transforms/Passes.h"
 #include "torch-mlir/InitAll.h"
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/MemoryBuffer.h"
+#include "llvm/Support/SourceMgr.h"
 
 #include "ONNXSerializer.h"
-#include "utils.h"
 
 llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
                                          llvm::cl::value_desc("filename"));
 llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("output.onnx"));
 
 llvm::cl::opt<bool> dumpMLIR("dump", llvm::cl::init(false));
+
+inline mlir::OwningOpRef<mlir::ModuleOp>
+LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
+  llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> fileOrErr =
+      llvm::MemoryBuffer::getFileOrSTDIN(inputFilename);
+  if (auto ec = fileOrErr.getError()) {
+    llvm::errs() << "Error can not open input file " << ec.message() << '\n';
+    return nullptr;
+  }
+
+  llvm::SourceMgr sourceMgr;
+  sourceMgr.AddNewSourceBuffer(std::move(*fileOrErr), llvm::SMLoc());
+  auto module = mlir::parseSourceFile<mlir::ModuleOp>(sourceMgr, &context);
+  if (!module) {
+    llvm::errs() << "Error can not parse file " << inputFilename << '\n';
+    return nullptr;
+  }
+  return module;
+}
 
 void addPassesTorchScriptToLinalg(mlir::PassManager &pm) {
   mlir::torch::Torch::TorchLoweringPipelineOptions options;
@@ -27,6 +54,52 @@ void addPassesTorchScriptToLinalg(mlir::PassManager &pm) {
                                                                     options);
   mlir::torch::TorchConversion::
       createTorchBackendToLinalgOnTensorsBackendPipeline(pm);
+}
+
+void addPassesLinalgToGpu(mlir::PassManager &pm) {
+  // Linalg To Parallel Loops
+  pm.addPass(mlir::bufferization::createEmptyTensorEliminationPass());
+  mlir::bufferization::OneShotBufferizationOptions opts;
+  opts.bufferizeFunctionBoundaries = true;
+  pm.addPass(mlir::bufferization::createOneShotBufferizePass(opts));
+  pm.addNestedPass<mlir::func::FuncOp>(
+      mlir::bufferization::createBufferHoistingPass());
+  pm.addNestedPass<mlir::func::FuncOp>(
+      mlir::bufferization::createBufferLoopHoistingPass());
+  pm.addPass(mlir::bufferization::createBufferResultsToOutParamsPass());
+  pm.addPass(mlir::bufferization::createDropEquivalentBufferResultsPass());
+  pm.addNestedPass<mlir::func::FuncOp>(
+      mlir::bufferization::createPromoteBuffersToStackPass());
+  mlir::bufferization::buildBufferDeallocationPipeline(pm, {});
+
+  pm.addPass(mlir::createConvertLinalgToParallelLoopsPass());
+
+  // Parallel Loops To GPu
+  pm.addNestedPass<mlir::func::FuncOp>(mlir::createGpuMapParallelLoopsPass());
+  pm.addPass(mlir::createParallelLoopToGpuPass());
+
+  // common passes
+  pm.addPass(mlir::createLowerAffinePass());
+  pm.addPass(mlir::createConvertVectorToSCFPass());
+  pm.addPass(mlir::createConvertSCFToCFPass());
+
+  pm.addPass(mlir::createConvertNVGPUToNVVMPass());
+  pm.addPass(mlir::createConvertNVVMToLLVMPass());
+
+  pm.addPass(mlir::createCanonicalizerPass());
+  pm.addPass(mlir::createCSEPass());
+
+  // gpu passes
+  pm.addPass(mlir::createGpuKernelOutliningPass());
+  pm.addPass(mlir::createGpuNVVMAttachTarget({}));
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createStripDebugInfoPass());
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(
+      mlir::createConvertGpuOpsToNVVMOps({}));
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createCanonicalizerPass());
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createCSEPass());
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(
+      mlir::createReconcileUnrealizedCastsPass());
+  pm.addPass(mlir::createGpuModuleToBinaryPass({}));
 }
 
 int main(int argc, char *argv[]) {
