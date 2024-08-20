@@ -17,8 +17,10 @@
 #include "torch-mlir/Dialect/TorchConversion/Transforms/Passes.h"
 #include "torch-mlir/InitAll.h"
 #include "llvm/Support/CommandLine.h"
+#include "llvm/Support/FileSystem.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/SourceMgr.h"
+#include "llvm/Support/ToolOutputFile.h"
 
 #include "ONNXSerializer.h"
 
@@ -27,11 +29,19 @@ llvm::cl::OptionCategory degineCategory("degine options");
 llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
                                          llvm::cl::value_desc("filename"),
                                          llvm::cl::cat(degineCategory));
-llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("output.onnx"),
+llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("-"),
                                           llvm::cl::cat(degineCategory));
 
-llvm::cl::opt<bool> dumpMLIR("dump", llvm::cl::init(false),
-                             llvm::cl::cat(degineCategory));
+enum Emit {
+  NONE,
+  MLIR,
+  ONNX,
+};
+llvm::cl::opt<Emit>
+    emitTarget("emit", llvm::cl::init(Emit::MLIR),
+               llvm::cl::values(clEnumVal(Emit::MLIR, "emit mlir output"),
+                                clEnumVal(Emit::ONNX, "emit onnx output")),
+               llvm::cl::cat(degineCategory));
 
 inline mlir::OwningOpRef<mlir::ModuleOp>
 LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
@@ -138,15 +148,23 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if (dumpMLIR) {
-    module->dump();
+  if (emitTarget == Emit::MLIR) {
+    std::error_code EC;
+    llvm::ToolOutputFile out(outputFilename, EC,
+                             llvm::sys::fs::OF_None | llvm::sys::fs::OF_Text);
+    if (EC) {
+      llvm::errs() << "Error dump mlir failed, message: " << EC.message()
+                   << '\n';
+      return 1;
+    }
+    out.os() << *module;
+    out.keep();
+  } else {
+    ONNXSerializer serializer(outputFilename.getValue());
+    if (!serializer.Serialize(*module)) {
+      llvm::errs() << "Error serialize to onnx failed\n";
+      return 1;
+    }
   }
-
-  ONNXSerializer serializer(outputFilename.getValue());
-  if (!serializer.Serialize(*module)) {
-    llvm::errs() << "Error serialize to onnx failed\n";
-    return 1;
-  }
-
   return 0;
 }
