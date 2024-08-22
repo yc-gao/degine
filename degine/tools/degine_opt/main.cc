@@ -77,6 +77,9 @@ void addPassesStablehloToLinalg(mlir::PassManager &pm) {
 }
 
 void addPassesLinalgToGpu(mlir::PassManager &pm) {
+  // linalg based pass
+  pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
+
   // Linalg To Parallel Loops
   pm.addPass(mlir::bufferization::createEmptyTensorEliminationPass());
   mlir::bufferization::OneShotBufferizationOptions opts;
