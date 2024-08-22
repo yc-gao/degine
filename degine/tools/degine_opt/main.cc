@@ -78,9 +78,9 @@ void addPassesStablehloToLinalg(mlir::PassManager &pm) {
 
 void addPassesLinalgToGpu(mlir::PassManager &pm) {
   // linalg based pass
-  pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
+  // pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
 
-  // Linalg To Parallel Loops
+  // Bufferization pass
   pm.addPass(mlir::bufferization::createEmptyTensorEliminationPass());
   mlir::bufferization::OneShotBufferizationOptions opts;
   opts.bufferizeFunctionBoundaries = true;
@@ -95,6 +95,7 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
       mlir::bufferization::createPromoteBuffersToStackPass());
   mlir::bufferization::buildBufferDeallocationPipeline(pm, {});
 
+  // Linalg To Parallel Loops
   pm.addPass(mlir::createConvertLinalgToParallelLoopsPass());
 
   // Parallel Loops To GPu
@@ -106,13 +107,12 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
   pm.addPass(mlir::createConvertVectorToSCFPass());
   pm.addPass(mlir::createConvertSCFToCFPass());
 
-  pm.addPass(mlir::createConvertNVGPUToNVVMPass());
-  pm.addPass(mlir::createConvertNVVMToLLVMPass());
-
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
 
   // gpu passes
+  pm.addPass(mlir::createConvertNVGPUToNVVMPass());
+  pm.addPass(mlir::createConvertNVVMToLLVMPass());
   pm.addPass(mlir::createGpuKernelOutliningPass());
   pm.addPass(mlir::createGpuNVVMAttachTarget({}));
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createStripDebugInfoPass());
