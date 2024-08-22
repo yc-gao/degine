@@ -1,5 +1,5 @@
 cc_binary(
-    name = "degine_opt",
+    name = "demo",
     srcs = glob(["*.cc", "*.h"]),
     deps = [
         "@llvm-project//llvm:Support",
