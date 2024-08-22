@@ -10,6 +10,7 @@ cc_binary(
         "@stablehlo//:stablehlo_passes",
         "@stablehlo//:linalg_passes",
         "@stablehlo//:tosa_passes",
+        "@torch-mlir//:TorchMLIRInitAll",
     ]
 )
 
