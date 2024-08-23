@@ -20,6 +20,11 @@ load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
 protobuf_deps()
 # protobuf end
 
+# cuda begin
+load("//3rdparty/cuda:cuda.bzl", "cuda_configure")
+cuda_configure(name = "cuda")
+# cuda end
+
 # llvm begin
 http_archive(
     name = "llvm-raw",
