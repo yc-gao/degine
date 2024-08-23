@@ -17,6 +17,9 @@ def _impl(repository_ctx):
     repository_ctx.symlink(cuda_toolkit_root.get_child("include"), "include")
     repository_ctx.symlink(cuda_toolkit_root.get_child("bin"), "bin")
     repository_ctx.symlink(cuda_toolkit_root.get_child("lib64"), "lib64")
+    # TODO:
+    repository_ctx.symlink("/usr/lib/x86_64-linux-gnu/libcuda.so", "lib/libcuda.so")
+
     repository_ctx.symlink(repository_ctx.path(
         Label("//3rdparty/cuda:BUILD.template")), "BUILD")
 
