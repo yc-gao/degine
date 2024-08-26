@@ -67,7 +67,7 @@ void addPassesStablehloToLinalg(mlir::PassManager &pm) {
 
 void addPassesLinalgToGpu(mlir::PassManager &pm) {
   // linalg based pass
-  // pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
+  pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
 
   // Bufferization pass
   pm.addPass(mlir::bufferization::createEmptyTensorEliminationPass());
@@ -95,22 +95,24 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
   pm.addPass(mlir::createLowerAffinePass());
   pm.addPass(mlir::createConvertVectorToSCFPass());
   pm.addPass(mlir::createConvertSCFToCFPass());
-
   pm.addPass(mlir::createCanonicalizerPass());
   pm.addPass(mlir::createCSEPass());
 
   // gpu passes
-  pm.addPass(mlir::createConvertNVGPUToNVVMPass());
-  pm.addPass(mlir::createConvertNVVMToLLVMPass());
   pm.addPass(mlir::createGpuKernelOutliningPass());
   pm.addPass(mlir::createGpuNVVMAttachTarget({}));
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createStripDebugInfoPass());
+
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(
       mlir::createConvertGpuOpsToNVVMOps({}));
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(
+      mlir::createConvertNVGPUToNVVMPass());
+  pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createConvertNVVMToLLVMPass());
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createCanonicalizerPass());
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createCSEPass());
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(
       mlir::createReconcileUnrealizedCastsPass());
+
   pm.addPass(mlir::createGpuModuleToBinaryPass({}));
 }
 
