@@ -100,6 +100,7 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
 
   // gpu passes
   pm.addPass(mlir::createGpuKernelOutliningPass());
+  pm.addNestedPass<mlir::func::FuncOp>(mlir::createGpuAsyncRegionPass());
   pm.addPass(mlir::createGpuNVVMAttachTarget({}));
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createStripDebugInfoPass());
 
@@ -129,6 +130,7 @@ int main(int argc, char *argv[]) {
   mlir::torch::registerAllDialects(registry);
 
   mlir::MLIRContext context(std::move(registry));
+  context.disableMultithreading();
 
   mlir::OwningOpRef<mlir::ModuleOp> module = LoadMLIR(context, inputFilename);
   if (!module) {
@@ -137,6 +139,7 @@ int main(int argc, char *argv[]) {
   }
 
   mlir::PassManager pm(module.get()->getName());
+  pm.enableIRPrinting();
   addPassesTorchScriptToStablehlo(pm);
   addPassesStablehloToLinalg(pm);
   addPassesLinalgToGpu(pm);
@@ -144,8 +147,6 @@ int main(int argc, char *argv[]) {
     llvm::errs() << "Error run PassManager failed\n";
     return 1;
   }
-
-  module->dump();
 
   return 0;
 }
