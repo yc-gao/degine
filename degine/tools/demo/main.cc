@@ -99,6 +99,7 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
   pm.addPass(mlir::createCSEPass());
 
   // gpu passes
+  pm.addPass(mlir::createGpuLauchSinkIndexComputationsPass());
   pm.addPass(mlir::createGpuKernelOutliningPass());
   pm.addNestedPass<mlir::func::FuncOp>(mlir::createGpuAsyncRegionPass());
   pm.addPass(mlir::createGpuNVVMAttachTarget({}));
