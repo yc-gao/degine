@@ -3,6 +3,7 @@
 #include "mlir/Dialect/Bufferization/Transforms/Passes.h"
 #include "mlir/Dialect/GPU/Transforms/Passes.h"
 #include "mlir/Dialect/Linalg/Passes.h"
+#include "mlir/Dialect/SCF/Transforms/Passes.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/IR/MLIRContext.h"
 #include "mlir/InitAllDialects.h"
@@ -86,6 +87,9 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
 
   // Linalg To Parallel Loops
   pm.addPass(mlir::createConvertLinalgToParallelLoopsPass());
+  pm.addPass(mlir::createTestSCFParallelLoopCollapsingPass());
+  pm.addPass(mlir::createParallelLoopFusionPass());
+  pm.addPass(mlir::createParallelLoopTilingPass());
 
   // Parallel Loops To GPu
   pm.addNestedPass<mlir::func::FuncOp>(mlir::createGpuMapParallelLoopsPass());
