@@ -32,17 +32,6 @@ llvm::cl::opt<std::string> inputFilename(llvm::cl::Positional,
 llvm::cl::opt<std::string> outputFilename("o", llvm::cl::init("-"),
                                           llvm::cl::cat(degineCategory));
 
-enum Emit {
-  NONE,
-  MLIR,
-  ONNX,
-};
-llvm::cl::opt<Emit>
-    emitTarget("emit", llvm::cl::init(Emit::MLIR),
-               llvm::cl::values(clEnumVal(Emit::MLIR, "emit mlir output"),
-                                clEnumVal(Emit::ONNX, "emit onnx output")),
-               llvm::cl::cat(degineCategory));
-
 inline mlir::OwningOpRef<mlir::ModuleOp>
 LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
   llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>> fileOrErr =
@@ -130,10 +119,13 @@ int main(int argc, char *argv[]) {
 
   mlir::DialectRegistry registry;
   mlir::registerAllDialects(registry);
-  mlir::stablehlo::registerAllDialects(registry);
-  mlir::torch::registerAllDialects(registry);
   mlir::registerAllExtensions(registry);
   mlir::registerAllGPUToLLVMIRTranslations(registry);
+
+  mlir::stablehlo::registerAllDialects(registry);
+
+  mlir::torch::registerAllDialects(registry);
+
   mlir::MLIRContext context(std::move(registry));
 
   mlir::OwningOpRef<mlir::ModuleOp> module = LoadMLIR(context, inputFilename);
@@ -151,23 +143,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
 
-  if (emitTarget == Emit::MLIR) {
-    std::error_code EC;
-    llvm::ToolOutputFile out(outputFilename, EC,
-                             llvm::sys::fs::OF_None | llvm::sys::fs::OF_Text);
-    if (EC) {
-      llvm::errs() << "Error dump mlir failed, message: " << EC.message()
-                   << '\n';
-      return 1;
-    }
-    out.os() << *module;
-    out.keep();
-  } else {
-    ONNXSerializer serializer(outputFilename.getValue());
-    if (!serializer.Serialize(*module)) {
-      llvm::errs() << "Error serialize to onnx failed\n";
-      return 1;
-    }
-  }
+  module->dump();
+
   return 0;
 }
