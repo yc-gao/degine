@@ -87,7 +87,6 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
 
   // Linalg To Parallel Loops
   pm.addPass(mlir::createConvertLinalgToParallelLoopsPass());
-  pm.addPass(mlir::createTestSCFParallelLoopCollapsingPass());
   pm.addPass(mlir::createParallelLoopFusionPass());
   pm.addPass(mlir::createParallelLoopTilingPass());
 
