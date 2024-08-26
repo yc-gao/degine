@@ -76,18 +76,8 @@ torch_mlir_configure(
 )
 # torch-mlir end
 
-http_archive(
-    name = "torch",
-    build_file_content = """
-cc_library(
-    name = "torch",
-    srcs = ["lib/libc10.so", "lib/libtorch_cpu.so"],
-    hdrs = glob(["include/**/*.h"]),
-    includes = ["include", "include/torch/csrc/api/include"],
-    visibility = ["//visibility:public"],
-)
-    """,
-    strip_prefix = "libtorch",
-    sha256 = "f739db778882e8826b92ab9e140c9c66a05041c621121386aae718c0110679fc",
-    url = "https://download.pytorch.org/libtorch/cu118/libtorch-cxx11-abi-shared-with-deps-2.4.0%2Bcu118.zip",
-)
+# torch begin
+load("//3rdparty/torch:workspace.bzl", "torch_configure")
+torch_configure()
+# torch end
+

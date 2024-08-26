@@ -13,18 +13,19 @@ cc_library(
 cc_import(
     name = "cuda",
     shared_library = "lib/libcuda.so",
+    deps = [":cuda_headers"],
 )
 
 cc_import(
     name = "cusparse_static",
     static_library = "lib64/libcusparse_static.a",
-    deps = [":cuda_headers", ":cuda"]
+    deps = [":cuda_headers", ":cuda"],
 )
 
 cc_import(
     name = "cudart_static",
     static_library = "lib64/libcudart_static.a",
-    deps = [":cuda_headers", ":cuda"]
+    deps = [":cuda_headers", ":cuda"],
 )
 
 alias(name = "libcuda", actual = ":cudart_static")
