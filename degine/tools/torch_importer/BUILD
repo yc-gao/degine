@@ -1,3 +1,5 @@
+package(default_visibility = ["//visibility:public"])
+
 cc_binary(
     name = "torch_importer",
     srcs = glob(["*.cc", "*.cpp", "*.h"]),
