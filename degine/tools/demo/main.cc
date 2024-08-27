@@ -108,7 +108,6 @@ void addPassesParallelLoopLowering(mlir::PassManager &pm) {
   // gpu passes
   pm.addPass(mlir::createGpuLauchSinkIndexComputationsPass());
   pm.addPass(mlir::createGpuKernelOutliningPass());
-  pm.addNestedPass<mlir::func::FuncOp>(mlir::createGpuAsyncRegionPass());
   pm.addPass(mlir::createGpuNVVMAttachTarget({}));
   pm.addNestedPass<mlir::gpu::GPUModuleOp>(mlir::createStripDebugInfoPass());
 
