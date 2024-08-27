@@ -52,7 +52,7 @@ LoadMLIR(mlir::MLIRContext &context, const std::string &inputFilename) {
   return module;
 }
 
-void addPassesTorchScriptToStablehlo(mlir::PassManager &pm) {
+void addPassesTorchScriptLowering(mlir::PassManager &pm) {
   mlir::torch::Torch::TorchLoweringPipelineOptions options;
   options.backendLegalOps = {"aten.flatten.using_ints",
                              "aten.adaptive_avg_pool1d"};
@@ -62,15 +62,12 @@ void addPassesTorchScriptToStablehlo(mlir::PassManager &pm) {
       pm, {});
 }
 
-void addPassesStablehloToLinalg(mlir::PassManager &pm) {
+void addPassesStablehloLowering(mlir::PassManager &pm) {
   pm.addPass(mlir::stablehlo::createStablehloLegalizeToLinalgPass());
+  pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
 }
 
-void addPassesLinalgToGpu(mlir::PassManager &pm) {
-  // linalg based pass
-  pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
-
-  // Bufferization pass
+void addPassesBufferize(mlir::PassManager &pm) {
   pm.addPass(mlir::bufferization::createEmptyTensorEliminationPass());
   mlir::bufferization::OneShotBufferizationOptions opts;
   opts.bufferizeFunctionBoundaries = true;
@@ -84,12 +81,15 @@ void addPassesLinalgToGpu(mlir::PassManager &pm) {
   pm.addNestedPass<mlir::func::FuncOp>(
       mlir::bufferization::createPromoteBuffersToStackPass());
   mlir::bufferization::buildBufferDeallocationPipeline(pm, {});
+}
 
-  // Linalg To Parallel Loops
+void addPassesLinalgLowering(mlir::PassManager &pm) {
   pm.addPass(mlir::createConvertLinalgToParallelLoopsPass());
   pm.addPass(mlir::createParallelLoopFusionPass());
   pm.addPass(mlir::createParallelLoopTilingPass());
+}
 
+void addPassesParallelLoopLowering(mlir::PassManager &pm) {
   // Parallel Loops To GPu
   pm.addNestedPass<mlir::func::FuncOp>(mlir::createGpuMapParallelLoopsPass());
   pm.addPass(mlir::createParallelLoopToGpuPass());
@@ -144,9 +144,11 @@ int main(int argc, char *argv[]) {
 
   mlir::PassManager pm(module.get()->getName());
   pm.enableIRPrinting();
-  addPassesTorchScriptToStablehlo(pm);
-  addPassesStablehloToLinalg(pm);
-  addPassesLinalgToGpu(pm);
+  addPassesTorchScriptLowering(pm);
+  addPassesStablehloLowering(pm);
+  addPassesBufferize(pm);
+  addPassesLinalgLowering(pm);
+  addPassesParallelLoopLowering(pm);
   if (mlir::failed(pm.run(*module))) {
     llvm::errs() << "Error run PassManager failed\n";
     return 1;
