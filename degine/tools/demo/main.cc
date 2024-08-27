@@ -90,6 +90,7 @@ void addPassesLinalgLowering(mlir::PassManager &pm) {
   pm.addPass(mlir::createConvertLinalgToParallelLoopsPass());
   pm.addPass(mlir::createParallelLoopFusionPass());
   pm.addPass(mlir::createParallelLoopTilingPass());
+  pm.addPass(mlir::createSCFForLoopCanonicalizationPass());
 }
 
 void addPassesParallelLoopLowering(mlir::PassManager &pm) {
