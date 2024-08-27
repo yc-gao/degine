@@ -64,7 +64,10 @@ void addPassesTorchScriptLowering(mlir::PassManager &pm) {
 
 void addPassesStablehloLowering(mlir::PassManager &pm) {
   pm.addPass(mlir::stablehlo::createStablehloLegalizeToLinalgPass());
+  pm.addPass(mlir::createLinalgSpecializeGenericOpsPass());
+  pm.addPass(mlir::createConvertElementwiseToLinalgPass());
   pm.addPass(mlir::createLinalgElementwiseOpFusionPass());
+  pm.addPass(mlir::createLinalgFoldUnitExtentDimsPass());
 }
 
 void addPassesBufferize(mlir::PassManager &pm) {
