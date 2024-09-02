@@ -1,17 +1,13 @@
 # Set the default compiler to the `gcc` binary on the `PATH`.
 build:generic_gcc --repo_env=CC=gcc
 
-# C++17 standard version is required.
-build:generic_gcc --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
-
-# Build errors are not a helpful way to enforce deprecation in-repo and it is
-# not the point of the Bazel build to catch usage of deprecated APIs.
 build:generic_gcc --copt=-Wno-deprecated --host_copt=-Wno-deprecated
-
-# Disable GCC warnings that are noisy and/or false positives on LLVM code.
-# These need to be global as some code triggering these is in header files.
 build:generic_gcc --copt=-Wno-unused-parameter --host_copt=-Wno-unused-parameter
 build:generic_gcc --copt=-Wno-comment --host_copt=-Wno-comment
-build:generic_gcc --cxxopt=-Wno-class-memaccess --host_cxxopt=-Wno-class-memaccess
 build:generic_gcc --copt=-Wno-maybe-uninitialized --host_copt=-Wno-maybe-uninitialized
 build:generic_gcc --copt=-Wno-misleading-indentation --host_copt=-Wno-misleading-indentation
+
+# C++17 standard version is required.
+build:generic_gcc --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
+build:generic_gcc --cxxopt=-Wno-class-memaccess --host_cxxopt=-Wno-class-memaccess
+
