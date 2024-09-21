@@ -1,0 +1,13 @@
+module(name = "degine", version = "0.0.1")
+
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+
+bazel_dep(name = "rules_cuda", version = "0.2.3")
+cuda = use_extension("@rules_cuda//cuda:extensions.bzl", "toolchain")
+cuda.local_toolchain(name = "local_cuda")
+use_repo(cuda, "local_cuda")
+
+bazel_dep(name = "fmt", version = "11.0.2")
+bazel_dep(name = "nlohmann_json", version = "3.11.3")
+bazel_dep(name = "protobuf", version = "28.2")
+
