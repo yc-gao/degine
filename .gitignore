@@ -284,6 +284,8 @@ cython_debug/
 !.gitignore
 !.gitsubmodules
 
+compile_flags.txt
+
 bazel-bin
 bazel-out
 bazel-testlogs
