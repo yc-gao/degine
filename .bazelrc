@@ -3,5 +3,9 @@ common --enable_bzlmod
 build --cxxopt=-std=c++17 --host_cxxopt=-std=c++17
 
 build --flag_alias=cuda_archs=@rules_cuda//cuda:archs
-build --cuda_archs=compute_61:compute_61,sm_61
+build --flag_alias=cuda_copts=@rules_cuda//cuda:copts
+build --flag_alias=cuda_host_copts=@rules_cuda//cuda:host_copts
+
+build --cuda_copts=-std=c++17 --cuda_host_copts=-std=c++17
+
 
