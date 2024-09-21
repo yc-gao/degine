@@ -1,0 +1,11 @@
+*.o
+*.pyc
+
+.cache
+bazel-bin
+bazel-out
+bazel-testlogs
+bazel-degine
+
+compile_flags.txt
+
