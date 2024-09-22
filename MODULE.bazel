@@ -11,3 +11,10 @@ bazel_dep(name = "fmt", version = "11.0.2")
 bazel_dep(name = "nlohmann_json", version = "3.11.3")
 bazel_dep(name = "protobuf", version = "28.2")
 
+nvbench_config = use_repo_rule("//3rdparty/nvbench:workspace.bzl", "nvbench_config")
+nvbench_config(
+    name = "nvbench",
+    url = "https://github.com/NVIDIA/nvbench/archive/a171514056e5d6a7f52a035dd6c812fa301d4f4f.zip",
+    sha256 = "d32767624a225303915a68220e779a41a6b2912c521edf044d5d14969342c9cb",
+    strip_prefix = "nvbench-a171514056e5d6a7f52a035dd6c812fa301d4f4f",
+)

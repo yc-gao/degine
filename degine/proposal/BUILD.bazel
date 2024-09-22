@@ -1,9 +1,13 @@
+load("@rules_cuda//cuda:defs.bzl", "cuda_binary")
+
 package(default_visibility = ["//visibility:public"])
 
-cc_binary(
-    name = "demo",
-    srcs = ["demo.cc"],
+cuda_binary(
+    name = "copy",
+    srcs = ["copy.cu"],
     deps = [
-        "//degine/ir",
+        "@local_cuda//:cuda_so",
+        "@local_cuda//:thrust",
+        "@nvbench//:nvbench_main",
     ],
 )
