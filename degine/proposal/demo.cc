@@ -5,6 +5,14 @@
 
 class InferSession {
 public:
+  InferSession(const GraphInfo &graph_info) {}
+
+  void Infer() {
+    for (auto &&kernel : kernels_) {
+      kernel->Infer(*this);
+    }
+  }
+
   OperandInfo *GetOperand(const std::string &name) {
     auto iter = name2operand_.find(name);
     if (iter != name2operand_.end()) {
@@ -14,6 +22,7 @@ public:
   }
 
 private:
+  std::vector<std::unique_ptr<OpKernel>> kernels_;
   std::unordered_map<std::string, OperandInfo> name2operand_;
 };
 
