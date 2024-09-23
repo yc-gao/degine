@@ -13,7 +13,7 @@ def _impl(repository_ctx):
     if result.return_code:
         fail(result.stderr)
 
-    result = repository_ctx.execute(["bash", "-c", "cmake --build build -j 8"])
+    result = repository_ctx.execute(["bash", "-c", "cmake --build build -j `nproc`"])
     print(result.stdout)
     if result.return_code:
         fail(result.stderr)
