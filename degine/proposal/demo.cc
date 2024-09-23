@@ -47,4 +47,8 @@ private:
 };
 DECLARE_OPKERNEL("Add", AddKernel)
 
-int main(int argc, char *argv[]) { return 0; }
+int main(int argc, char *argv[]) {
+  // onnx::TensorShapeProto tensor_shape;
+
+  return 0;
+}
