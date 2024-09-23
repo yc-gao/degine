@@ -2,12 +2,13 @@
 #include <stdexcept>
 #include <unordered_map>
 
+#include "fmt/core.h"
+
 #include "degine/ir/onnx.pb.h"
 #include "degine/proposal/KernelRegistry.h"
 
 class InferSession {
-public:
-  InferSession(const GraphInfo &graph_info) {
+  void InitBuffer(const GraphInfo &graph_info) {
     for (const auto &initializer : graph_info.initializer()) {
       auto ret =
           name2operand_.emplace(initializer.name(), OperandInfo(initializer));
@@ -54,6 +55,18 @@ public:
     }
   }
 
+  void InitOp(const GraphInfo &graph_info) {
+    for (const auto &op_info : graph_info.node()) {
+      kernels_.emplace_back(KernelRegistry::Instance().BuildKernel(op_info));
+    }
+  }
+
+public:
+  InferSession(const GraphInfo &graph_info) {
+    InitBuffer(graph_info);
+    InitOp(graph_info);
+  }
+
   void Infer() {
     for (auto &&kernel : kernels_) {
       kernel->Infer(*this);
@@ -86,6 +99,14 @@ public:
     OperandInfo *a = session.GetOperand(operand_a_);
     OperandInfo *b = session.GetOperand(operand_b_);
     OperandInfo *c = session.GetOperand(operand_c_);
+
+    float *x0 = a->Buffer<float>();
+    float *x1 = b->Buffer<float>();
+    float *y = c->Buffer<float>();
+
+    for (int i = 0; i < a->ElemCount(); i++) {
+      y[i] = x0[i] + x1[i];
+    }
   }
 
 private:
@@ -108,6 +129,13 @@ int main(int argc, char *argv[]) {
   sess.GetOperand("x")->Buffer(x.data());
   sess.GetOperand("y")->Buffer(x.data());
   sess.Infer();
+
+  for (int i = 0; i < x.size();) {
+    for (int j = 0; j < 16 && i < x.size(); j++, i++) {
+      fmt::print(" {} ", x[i]);
+    }
+    fmt::println("");
+  }
 
   return 0;
 }

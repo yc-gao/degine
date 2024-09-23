@@ -56,15 +56,18 @@ public:
   }
 
   void Buffer(void *buf) { buffer = buf; }
-  void *Buffer() { return buffer; }
+  template <typename T = void> T *Buffer() {
+    return reinterpret_cast<T *>(buffer);
+  }
 
   std::string Name() const { return name; }
 
-  std::size_t ByteSize() const {
-    auto count = std::accumulate(elem_shape.begin(), elem_shape.end(), 1,
-                                 [](auto a, auto b) { return a * b; });
-    return count * dtype2size[elem_type];
+  std::int64_t ElemCount() const {
+    return std::accumulate(elem_shape.begin(), elem_shape.end(), 1,
+                           [](auto a, auto b) { return a * b; });
   }
+
+  std::size_t ByteSize() const { return ElemCount() * dtype2size[elem_type]; }
 
 private:
   std::string name;
