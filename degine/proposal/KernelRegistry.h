@@ -7,11 +7,7 @@
 
 #include "fmt/core.h"
 
-#include "degine/ir/onnx.pb.h"
-
-class OperandInfo {};
-using OpInfo = onnx::NodeProto;
-using GraphInfo = onnx::GraphProto;
+#include "degine/ir/GraphInfo.h"
 
 class InferSession;
 class OpKernel {
