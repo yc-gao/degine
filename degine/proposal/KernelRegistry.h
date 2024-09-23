@@ -12,23 +12,23 @@
 class InferSession;
 class OpKernel {
 public:
+  OpKernel(const OpInfo &) {}
   virtual void Infer(InferSession &) = 0;
 };
 
-template <typename T = void> class KernelBuilder;
-template <> class KernelBuilder<void> {
-public:
-  virtual std::unique_ptr<OpKernel> BuildKernel(const OpInfo &) = 0;
-};
-
-template <typename T> class KernelBuilder : public KernelBuilder<void> {
-public:
-  virtual std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) {
-    return std::make_unique<T>(op_info);
-  }
-};
-
 class KernelRegistry {
+  class KernelBuilder {
+  public:
+    virtual std::unique_ptr<OpKernel> BuildKernel(const OpInfo &) = 0;
+  };
+
+  template <typename T> class KernelBuilderImpl : public KernelBuilder {
+  public:
+    std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) override {
+      return std::make_unique<T>(op_info);
+    }
+  };
+
 public:
   static KernelRegistry &Instance() {
     static KernelRegistry inst;
@@ -45,7 +45,8 @@ public:
 
   template <typename T> void RegisterKernel(std::string optype) {
     if (!optype2builder_
-             .emplace(std::move(optype), std::make_unique<KernelBuilder<T>>())
+             .emplace(std::move(optype),
+                      std::make_unique<KernelBuilderImpl<T>>())
              .second) {
       throw std::runtime_error(
           fmt::format("can not register new kernel {}", optype));
@@ -53,7 +54,7 @@ public:
   }
 
 private:
-  std::unordered_map<std::string, std::unique_ptr<KernelBuilder<>>>
+  std::unordered_map<std::string, std::unique_ptr<KernelBuilder>>
       optype2builder_;
 };
 

@@ -28,7 +28,7 @@ private:
 
 class AddKernel : public OpKernel {
 public:
-  AddKernel(const OpInfo &op_info) {
+  AddKernel(const OpInfo &op_info) : OpKernel(op_info) {
     operand_a_ = op_info.Input(0);
     operand_b_ = op_info.Input(1);
     operand_c_ = op_info.Output(0);
