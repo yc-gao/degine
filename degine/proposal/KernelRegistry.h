@@ -36,7 +36,7 @@ public:
   }
 
   std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) {
-    auto iter = optype2builder_.find(op_info.op_type());
+    auto iter = optype2builder_.find(op_info.OpType());
     if (iter != optype2builder_.end()) {
       return iter->second->BuildKernel(op_info);
     }

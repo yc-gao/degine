@@ -19,10 +19,10 @@ private:
 
 class AddKernel : public OpKernel {
 public:
-  AddKernel(const onnx::NodeProto &node) {
-    operand_a_ = node.input(0);
-    operand_b_ = node.input(1);
-    operand_c_ = node.output(0);
+  AddKernel(const OpInfo &op_info) {
+    operand_a_ = op_info.Input(0);
+    operand_b_ = op_info.Input(1);
+    operand_c_ = op_info.Output(0);
   }
 
   void Infer(InferSession &session) override {
