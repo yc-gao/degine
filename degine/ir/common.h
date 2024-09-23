@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <numeric>
 #include <stdexcept>
 
 #include "fmt/format.h"
@@ -8,6 +9,22 @@
 #include "degine/ir/onnx.pb.h"
 
 class OperandInfo {
+  static constexpr std::array<std::int64_t, 13> dtype2size{
+      -1, // UNDEFINED
+      sizeof(float),
+      sizeof(std::uint8_t),
+      sizeof(std::int8_t),
+      sizeof(std::uint16_t),
+      sizeof(std::int16_t),
+      sizeof(std::int64_t),
+      -1, // STRING,
+      -1, // BOOL
+      2,  // FLOAT16
+      sizeof(double),
+      sizeof(std::uint32_t),
+      sizeof(std::uint64_t),
+  };
+
 public:
   OperandInfo(const onnx::ValueInfoProto &value_info) {
     name = value_info.name();
@@ -38,11 +55,24 @@ public:
               std::back_inserter(elem_shape));
   }
 
+  void Buffer(void *buf) { buffer = buf; }
+  void *Buffer() { return buffer; }
+
+  std::string Name() const { return name; }
+
+  std::size_t ByteSize() const {
+    auto count = std::accumulate(elem_shape.begin(), elem_shape.end(), 1,
+                                 [](auto a, auto b) { return a * b; });
+    return count * dtype2size[elem_type];
+  }
+
 private:
   std::string name;
   std::int32_t elem_type;
   std::vector<std::int64_t> elem_shape;
+  void *buffer;
 };
+
 class OpInfo {
 public:
   OpInfo(const onnx::NodeProto &node) : impl_(&node) {}
