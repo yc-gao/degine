@@ -12,20 +12,23 @@
 class InferSession;
 class OpKernel {
 public:
-  OpKernel(const OpInfo &) {}
-  virtual void Infer(InferSession &) = 0;
+  OpKernel(InferSession &, const OpInfo &) {}
+  virtual void Infer() = 0;
 };
 
 class KernelRegistry {
+
   class KernelBuilder {
   public:
-    virtual std::unique_ptr<OpKernel> BuildKernel(const OpInfo &) = 0;
+    virtual std::unique_ptr<OpKernel> BuildKernel(InferSession &,
+                                                  const OpInfo &) = 0;
   };
 
   template <typename T> class KernelBuilderImpl : public KernelBuilder {
   public:
-    std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) override {
-      return std::make_unique<T>(op_info);
+    std::unique_ptr<OpKernel> BuildKernel(InferSession &sess,
+                                          const OpInfo &op_info) override {
+      return std::make_unique<T>(sess, op_info);
     }
   };
 
@@ -35,12 +38,15 @@ public:
     return inst;
   }
 
-  std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) {
+  std::unique_ptr<OpKernel> BuildKernel(InferSession &sess,
+                                        const OpInfo &op_info) {
     auto iter = optype2builder_.find(op_info.OpType());
-    if (iter != optype2builder_.end()) {
-      return iter->second->BuildKernel(op_info);
+    if (iter == optype2builder_.end()) {
+      return nullptr;
+      // throw std::runtime_error(
+      //     fmt::format("can not build kernel, optype {}", op_info.OpType()));
     }
-    return nullptr;
+    return iter->second->BuildKernel(sess, op_info);
   };
 
   template <typename T> void RegisterKernel(std::string optype) {
@@ -49,7 +55,7 @@ public:
                       std::make_unique<KernelBuilderImpl<T>>())
              .second) {
       throw std::runtime_error(
-          fmt::format("can not register new kernel {}", optype));
+          fmt::format("can not register new kernel, optype {}", optype));
     }
   }
 

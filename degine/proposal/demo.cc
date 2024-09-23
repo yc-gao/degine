@@ -56,8 +56,14 @@ class InferSession {
   }
 
   void InitOp(const GraphInfo &graph_info) {
-    for (const auto &op_info : graph_info.node()) {
-      kernels_.emplace_back(KernelRegistry::Instance().BuildKernel(op_info));
+    for (const OpInfo &op_info : graph_info.node()) {
+      auto op = KernelRegistry::Instance().BuildKernel(*this, op_info);
+      if (!op) {
+        throw std::runtime_error(
+            fmt::format("can not build kernel, optype {} opname {}",
+                        op_info.OpType(), op_info.Name()));
+      }
+      kernels_.emplace_back(std::move(op));
     }
   }
 
@@ -69,7 +75,7 @@ public:
 
   void Infer() {
     for (auto &&kernel : kernels_) {
-      kernel->Infer(*this);
+      kernel->Infer();
     }
   }
 
@@ -89,30 +95,27 @@ private:
 
 class AddKernel : public OpKernel {
 public:
-  AddKernel(const OpInfo &op_info) : OpKernel(op_info) {
-    operand_a_ = op_info.Input(0);
-    operand_b_ = op_info.Input(1);
-    operand_c_ = op_info.Output(0);
+  AddKernel(InferSession &sess, const OpInfo &op_info)
+      : OpKernel(sess, op_info) {
+    opa = sess.GetOperand(op_info.Input(0));
+    opb = sess.GetOperand(op_info.Input(1));
+    opc = sess.GetOperand(op_info.Output(0));
   }
 
-  void Infer(InferSession &session) override {
-    OperandInfo *a = session.GetOperand(operand_a_);
-    OperandInfo *b = session.GetOperand(operand_b_);
-    OperandInfo *c = session.GetOperand(operand_c_);
+  void Infer() override {
+    float *x0 = opa->Buffer<float>();
+    float *x1 = opb->Buffer<float>();
+    float *y = opc->Buffer<float>();
 
-    float *x0 = a->Buffer<float>();
-    float *x1 = b->Buffer<float>();
-    float *y = c->Buffer<float>();
-
-    for (int i = 0; i < a->ElemCount(); i++) {
+    for (int i = 0; i < opa->ElemCount(); i++) {
       y[i] = x0[i] + x1[i];
     }
   }
 
 private:
-  std::string operand_a_;
-  std::string operand_b_;
-  std::string operand_c_;
+  OperandInfo *opa;
+  OperandInfo *opb;
+  OperandInfo *opc;
 };
 DECLARE_OPKERNEL("Add", AddKernel)
 
