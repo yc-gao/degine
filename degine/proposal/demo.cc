@@ -3,10 +3,6 @@
 #include "degine/ir/onnx.pb.h"
 #include "degine/proposal/KernelRegistry.h"
 
-class OperandInfo {
-public:
-};
-
 class InferSession {
 public:
   OperandInfo *GetOperand(const std::string &name) {

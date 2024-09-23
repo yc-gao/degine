@@ -9,6 +9,10 @@
 
 #include "degine/ir/onnx.pb.h"
 
+class OperandInfo {};
+using OpInfo = onnx::NodeProto;
+using GraphInfo = onnx::GraphProto;
+
 class InferSession;
 class OpKernel {
 public:
@@ -18,14 +22,13 @@ public:
 template <typename T = void> class KernelBuilder;
 template <> class KernelBuilder<void> {
 public:
-  virtual std::unique_ptr<OpKernel>
-  BuildKernel(const onnx::NodeProto &node) = 0;
+  virtual std::unique_ptr<OpKernel> BuildKernel(const OpInfo &) = 0;
 };
 
 template <typename T> class KernelBuilder : public KernelBuilder<void> {
 public:
-  virtual std::unique_ptr<OpKernel> BuildKernel(const onnx::NodeProto &node) {
-    return std::make_unique<T>(node);
+  virtual std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) {
+    return std::make_unique<T>(op_info);
   }
 };
 
@@ -36,10 +39,10 @@ public:
     return inst;
   }
 
-  std::unique_ptr<OpKernel> BuildKernel(const onnx::NodeProto &node) {
-    auto iter = optype2builder_.find(node.op_type());
+  std::unique_ptr<OpKernel> BuildKernel(const OpInfo &op_info) {
+    auto iter = optype2builder_.find(op_info.op_type());
     if (iter != optype2builder_.end()) {
-      return iter->second->BuildKernel(node);
+      return iter->second->BuildKernel(op_info);
     }
     return nullptr;
   };
