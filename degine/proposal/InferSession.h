@@ -1,10 +1,12 @@
 #pragma once
 
+#include <cstring>
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
+#include "degine/ir/onnx.pb.h"
 #include "degine/proposal/KernelRegistry.h"
 #include "degine/proposal/graph.h"
 
@@ -15,14 +17,24 @@ class InferSession {
           name2operand_.emplace(initializer.name(), OperandInfo(initializer));
       if (!ret.second) {
         throw std::runtime_error(fmt::format(
-            "can not apply initializer, name {}", initializer.name()));
+            "can not init initializer, name {}", initializer.name()));
       }
       OperandInfo &operand = ret.first->second;
       std::unique_ptr<std::int8_t[]> buffer(
           new std::int8_t[operand.ByteSize()]);
       operand.Buffer(buffer.get());
       name2buffer_.emplace(operand.Name(), std::move(buffer));
-      // TODO: impl
+
+      switch (operand.Dtype()) {
+      case onnx::TensorProto_DataType_FLOAT:
+        std::memcpy(operand.Buffer(), initializer.float_data().data(),
+                    operand.ByteSize());
+        break;
+      default:
+        throw std::runtime_error(fmt::format(
+            "can not copy initializer, name {}", initializer.name()));
+        break;
+      }
     }
     for (const auto &vinfo : graph_info.input()) {
       auto ret = name2operand_.emplace(vinfo.name(), OperandInfo(vinfo));
