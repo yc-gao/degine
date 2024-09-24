@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "boost/preprocessor/cat.hpp"
 #include "fmt/core.h"
 
 #include "degine/proposal/graph.h"
@@ -66,7 +67,7 @@ private:
 
 #define DECLARE_OPKERNEL(optype, cls)                                          \
   namespace {                                                                  \
-  bool flag = []() {                                                           \
+  bool BOOST_PP_CAT(flag, __COUNTER__) = []() {                                \
     KernelRegistry::Instance().RegisterKernel<cls>(optype);                    \
     return true;                                                               \
   }();                                                                         \

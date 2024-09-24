@@ -11,6 +11,7 @@ cc_binary(
     deps = [
         "@boost.core",
         "@boost.range",
+        "@boost.preprocessor",
         "@fmt",
         "//degine/ir",
         ":headers"
