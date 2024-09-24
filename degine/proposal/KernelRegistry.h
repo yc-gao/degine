@@ -65,7 +65,18 @@ public:
     if (iter == optype2builder_.end()) {
       return nullptr;
     }
-    // TODO: kernel id match
+
+    // kernel id match
+    if (op_info.GetKernelId() != -1) {
+      for (const auto &builder : iter->second) {
+        if (builder->GetKernelId() == op_info.GetKernelId()) {
+          return builder->BuildKernel(sess, op_info);
+        }
+      }
+      return nullptr;
+    }
+
+    // common match
     for (const auto &builder : iter->second) {
       if (builder->Match(op_info)) {
         return builder->BuildKernel(sess, op_info);

@@ -113,6 +113,8 @@ public:
   std::string Name() const { return impl_->name(); }
   std::string OpType() const { return impl_->op_type(); }
 
+  std::int64_t GetKernelId() const { return -1; }
+
   std::size_t InputCount() const { return impl_->input().size(); }
   std::string Input(int idx) const { return impl_->input(idx); }
 
