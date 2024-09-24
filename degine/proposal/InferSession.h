@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "degine/ir/graph.h"
 #include "degine/proposal/KernelRegistry.h"
+#include "degine/proposal/graph.h"
 
 class InferSession {
   void InitBuffer(const GraphInfo &graph_info) {
