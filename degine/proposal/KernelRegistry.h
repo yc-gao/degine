@@ -18,7 +18,7 @@ public:
   static constexpr std::int64_t kernel_id = -1;
   static constexpr std::int64_t priority = 100;
 
-  static bool Match(InferSession &, const OpInfo &) { return true; }
+  static constexpr bool Match(InferSession &, const OpInfo &) { return true; }
 
   OpKernel(InferSession &, const OpInfo &) {}
   virtual void Infer() = 0;
