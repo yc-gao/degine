@@ -9,7 +9,6 @@
 #include <boost/range.hpp>
 #include <boost/range/join.hpp>
 
-#include "degine/ir/onnx.pb.h"
 #include "degine/proposal/KernelRegistry.h"
 #include "degine/proposal/graph.h"
 
@@ -29,10 +28,18 @@ class InferSession {
       name2buffer_.emplace(operand.Name(), std::move(buffer));
 
       switch (operand.Dtype()) {
-      case onnx::TensorProto_DataType_FLOAT:
+      case OperandInfo::DataType::FLOAT:
         std::memcpy(operand.Buffer(), initializer.float_data().data(),
                     operand.ByteSize());
-        break;
+      case OperandInfo::DataType::UINT32:
+        std::memcpy(operand.Buffer(), initializer.int32_data().data(),
+                    operand.ByteSize());
+      case OperandInfo::DataType::INT32:
+        std::memcpy(operand.Buffer(), initializer.int32_data().data(),
+                    operand.ByteSize());
+      case OperandInfo::DataType::INT64:
+        std::memcpy(operand.Buffer(), initializer.int64_data().data(),
+                    operand.ByteSize());
       default:
         throw std::runtime_error(fmt::format(
             "can not copy initializer, name {}", initializer.name()));

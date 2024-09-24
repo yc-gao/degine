@@ -26,6 +26,33 @@ class OperandInfo {
   };
 
 public:
+  enum DataType {
+    UNDEFINED = onnx::TensorProto_DataType_UNDEFINED,
+    FLOAT = onnx::TensorProto_DataType_FLOAT,
+    UINT8 = onnx::TensorProto_DataType_UINT8,
+    INT8 = onnx::TensorProto_DataType_INT8,
+    UINT16 = onnx::TensorProto_DataType_UINT16,
+    INT16 = onnx::TensorProto_DataType_INT16,
+    INT32 = onnx::TensorProto_DataType_INT32,
+    INT64 = onnx::TensorProto_DataType_INT64,
+    STRING = onnx::TensorProto_DataType_STRING,
+    BOOL = onnx::TensorProto_DataType_BOOL,
+    FLOAT16 = onnx::TensorProto_DataType_FLOAT16,
+    DOUBLE = onnx::TensorProto_DataType_DOUBLE,
+    UINT32 = onnx::TensorProto_DataType_UINT32,
+    UINT64 = onnx::TensorProto_DataType_UINT64,
+    COMPLEX64 = onnx::TensorProto_DataType_COMPLEX64,
+    COMPLEX128 = onnx::TensorProto_DataType_COMPLEX128,
+    BFLOAT16 = onnx::TensorProto_DataType_BFLOAT16,
+    FLOAT8E4M3FN = onnx::TensorProto_DataType_FLOAT8E4M3FN,
+    FLOAT8E4M3FNUZ = onnx::TensorProto_DataType_FLOAT8E4M3FNUZ,
+    FLOAT8E5M2 = onnx::TensorProto_DataType_FLOAT8E5M2,
+    FLOAT8E5M2FNUZ = onnx::TensorProto_DataType_FLOAT8E5M2FNUZ,
+    UINT4 = onnx::TensorProto_DataType_UINT4,
+    INT4 = onnx::TensorProto_DataType_INT4,
+    FLOAT4E2M1 = onnx::TensorProto_DataType_FLOAT4E2M1,
+  };
+
   OperandInfo(const onnx::ValueInfoProto &value_info) {
     name = value_info.name();
 
