@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "degine/ir/common.h"
+#include "degine/ir/graph.h"
 #include "degine/proposal/KernelRegistry.h"
 
 class InferSession {

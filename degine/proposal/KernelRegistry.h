@@ -7,7 +7,7 @@
 
 #include "fmt/core.h"
 
-#include "degine/ir/common.h"
+#include "degine/ir/graph.h"
 
 class InferSession;
 class OpKernel {
