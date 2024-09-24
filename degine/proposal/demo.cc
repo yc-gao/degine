@@ -8,29 +8,38 @@
 #include "degine/proposal/InferSession.h"
 #include "degine/proposal/KernelRegistry.h"
 
-class AddKernel : public OpKernel {
+template <typename Inhert> class GeneralOpKernel : public OpKernel {
 public:
-  AddKernel(InferSession &sess, const OpInfo &op_info)
+  GeneralOpKernel(InferSession &sess, const OpInfo &op_info)
       : OpKernel(sess, op_info) {
-    opa = sess.GetOperand(op_info.Input(0));
-    opb = sess.GetOperand(op_info.Input(1));
-    opc = sess.GetOperand(op_info.Output(0));
-  }
-
-  void Infer() override {
-    float *x0 = opa->Buffer<float>();
-    float *x1 = opb->Buffer<float>();
-    float *y = opc->Buffer<float>();
-
-    for (int i = 0; i < opa->ElemCount(); i++) {
-      y[i] = x0[i] + x1[i];
+    for (auto i = 0ul, e = op_info.InputCount(); i < e; i++) {
+      islots_.emplace_back(sess.GetOperand(op_info.Input(i)));
+    }
+    for (auto i = 0ul, e = op_info.OutputCount(); i < e; i++) {
+      oslots_.emplace_back(sess.GetOperand(op_info.Output(i)));
     }
   }
 
+  OperandInfo *Input(int idx) { return islots_[idx]; }
+  OperandInfo *Output(int idx) { return oslots_[idx]; }
+
 private:
-  OperandInfo *opa;
-  OperandInfo *opb;
-  OperandInfo *opc;
+  std::vector<OperandInfo *> islots_;
+  std::vector<OperandInfo *> oslots_;
+};
+
+struct AddKernel : public GeneralOpKernel<AddKernel> {
+  using GeneralOpKernel::GeneralOpKernel;
+
+  void Infer() override {
+    float *x0 = Input(0)->Buffer<float>();
+    float *x1 = Input(1)->Buffer<float>();
+    float *y = Output(0)->Buffer<float>();
+
+    for (int i = 0; i < Input(0)->ElemCount(); i++) {
+      y[i] = x0[i] + x1[i];
+    }
+  }
 };
 DECLARE_OPKERNEL("Add", AddKernel)
 

@@ -83,7 +83,11 @@ public:
 
   std::string Name() const { return impl_->name(); }
   std::string OpType() const { return impl_->op_type(); }
+
+  std::size_t InputCount() const { return impl_->input().size(); }
   std::string Input(int idx) const { return impl_->input(idx); }
+
+  std::size_t OutputCount() const { return impl_->output().size(); }
   std::string Output(int idx) const { return impl_->output(idx); }
 
 private:
