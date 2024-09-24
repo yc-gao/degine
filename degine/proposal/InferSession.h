@@ -9,8 +9,8 @@
 #include <boost/range.hpp>
 #include <boost/range/join.hpp>
 
-#include "degine/proposal/KernelRegistry.h"
 #include "degine/proposal/graph.h"
+#include "degine/proposal/kernel_registry.h"
 
 class InferSession {
 public:

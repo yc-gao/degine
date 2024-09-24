@@ -1,7 +1,7 @@
 #pragma once
 
 #include "degine/proposal/InferSession.h"
-#include "degine/proposal/KernelRegistry.h"
+#include "degine/proposal/kernel_registry.h"
 
 template <typename Inhert> class GeneralOpKernel : public OpKernel {
 public:
