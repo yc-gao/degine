@@ -1,20 +1,8 @@
-load("@rules_cuda//cuda:defs.bzl", "cuda_binary")
-
 package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "headers",
     hdrs = glob(["*.h"]),
-)
-
-cuda_binary(
-    name = "copy",
-    srcs = ["copy.cu"],
-    deps = [
-        "@local_cuda//:cuda_so",
-        "@local_cuda//:thrust",
-        "@nvbench//:nvbench_main",
-    ],
 )
 
 cc_binary(
