@@ -6,6 +6,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/range.hpp>
+#include <boost/range/join.hpp>
+
 #include "degine/ir/onnx.pb.h"
 #include "degine/proposal/KernelRegistry.h"
 #include "degine/proposal/graph.h"
@@ -36,27 +39,9 @@ class InferSession {
         break;
       }
     }
-    for (const auto &vinfo : graph_info.input()) {
-      auto ret = name2operand_.emplace(vinfo.name(), OperandInfo(vinfo));
-      if (ret.second) {
-        OperandInfo &operand = ret.first->second;
-        std::unique_ptr<std::int8_t[]> buffer(
-            new std::int8_t[operand.ByteSize()]);
-        operand.Buffer(buffer.get());
-        name2buffer_.emplace(operand.Name(), std::move(buffer));
-      }
-    }
-    for (const auto &vinfo : graph_info.output()) {
-      auto ret = name2operand_.emplace(vinfo.name(), OperandInfo(vinfo));
-      if (ret.second) {
-        OperandInfo &operand = ret.first->second;
-        std::unique_ptr<std::int8_t[]> buffer(
-            new std::int8_t[operand.ByteSize()]);
-        operand.Buffer(buffer.get());
-        name2buffer_.emplace(operand.Name(), std::move(buffer));
-      }
-    }
-    for (const auto &vinfo : graph_info.value_info()) {
+    for (const auto &vinfo :
+         boost::join(boost::join(graph_info.input(), graph_info.output()),
+                     graph_info.value_info())) {
       auto ret = name2operand_.emplace(vinfo.name(), OperandInfo(vinfo));
       if (ret.second) {
         OperandInfo &operand = ret.first->second;

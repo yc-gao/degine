@@ -9,8 +9,9 @@ cc_binary(
     name = "demo",
     srcs = glob(["*.cc"]),
     deps = [
-        "@fmt",
         "@boost.core",
+        "@boost.range",
+        "@fmt",
         "//degine/ir",
         ":headers"
     ],
