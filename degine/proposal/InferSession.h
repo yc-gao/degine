@@ -25,7 +25,7 @@ class InferSession {
       std::unique_ptr<std::int8_t[]> buffer(
           new std::int8_t[operand.ByteSize()]);
       operand.Buffer(buffer.get());
-      name2buffer_.emplace(operand.Name(), std::move(buffer));
+      buffers_.emplace_back(std::move(buffer));
 
       switch (operand.Dtype()) {
       case OperandInfo::DataType::FLOAT:
@@ -55,7 +55,7 @@ class InferSession {
         std::unique_ptr<std::int8_t[]> buffer(
             new std::int8_t[operand.ByteSize()]);
         operand.Buffer(buffer.get());
-        name2buffer_.emplace(operand.Name(), std::move(buffer));
+        buffers_.emplace_back(std::move(buffer));
       }
     }
   }
@@ -94,6 +94,7 @@ public:
 
 private:
   std::vector<std::unique_ptr<OpKernel>> kernels_;
-  std::unordered_map<std::string, std::unique_ptr<std::int8_t[]>> name2buffer_;
+  std::vector<std::unique_ptr<std::int8_t[]>> buffers_;
+
   std::unordered_map<std::string, OperandInfo> name2operand_;
 };
