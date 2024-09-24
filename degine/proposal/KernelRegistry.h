@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "boost/preprocessor/cat.hpp"
 #include "fmt/core.h"
@@ -13,6 +15,11 @@
 class InferSession;
 class OpKernel {
 public:
+  static constexpr std::int64_t kernel_id = -1;
+  static constexpr std::int64_t priority = 100;
+
+  static bool Match(InferSession &, const OpInfo &) { return true; }
+
   OpKernel(InferSession &, const OpInfo &) {}
   virtual void Infer() = 0;
 };
@@ -21,12 +28,25 @@ class KernelRegistry {
 
   class KernelBuilder {
   public:
+    virtual std::int64_t GetKernelId() const = 0;
+    virtual std::int64_t GetPriority() const = 0;
+
+    virtual bool Match(InferSession &sess, const OpInfo &op_info) const = 0;
     virtual std::unique_ptr<OpKernel> BuildKernel(InferSession &,
                                                   const OpInfo &) = 0;
+
+    bool operator<(const KernelBuilder &other) const {
+      return GetPriority() < other.GetPriority();
+    }
   };
 
   template <typename T> class KernelBuilderImpl : public KernelBuilder {
   public:
+    std::int64_t GetKernelId() const override { return T::kernel_id; }
+    std::int64_t GetPriority() const override { return T::priority; }
+    bool Match(InferSession &sess, const OpInfo &op_info) const override {
+      return T::Match(sess, op_info);
+    }
     std::unique_ptr<OpKernel> BuildKernel(InferSession &sess,
                                           const OpInfo &op_info) override {
       return std::make_unique<T>(sess, op_info);
@@ -44,24 +64,25 @@ public:
     auto iter = optype2builder_.find(op_info.OpType());
     if (iter == optype2builder_.end()) {
       return nullptr;
-      // throw std::runtime_error(
-      //     fmt::format("can not build kernel, optype {}", op_info.OpType()));
     }
-    return iter->second->BuildKernel(sess, op_info);
+    // TODO: kernel id match
+    for (const auto &builder : iter->second) {
+      if (builder->Match(sess, op_info)) {
+        return builder->BuildKernel(sess, op_info);
+      }
+    }
+    return nullptr;
   };
 
-  template <typename T> void RegisterKernel(std::string optype) {
-    if (!optype2builder_
-             .emplace(std::move(optype),
-                      std::make_unique<KernelBuilderImpl<T>>())
-             .second) {
-      throw std::runtime_error(
-          fmt::format("can not register new kernel, optype {}", optype));
-    }
+  template <typename T> void RegisterKernel(const std::string &optype) {
+    auto &tmp = optype2builder_[optype];
+    tmp.emplace_back(std::make_unique<KernelBuilderImpl<T>>());
+    std::sort(tmp.begin(), tmp.end(),
+              [](const auto &a, const auto &b) { return *a < *b; });
   }
 
 private:
-  std::unordered_map<std::string, std::unique_ptr<KernelBuilder>>
+  std::unordered_map<std::string, std::vector<std::unique_ptr<KernelBuilder>>>
       optype2builder_;
 };
 
