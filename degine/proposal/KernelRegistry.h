@@ -18,7 +18,7 @@ public:
   static constexpr std::int64_t kernel_id = -1;
   static constexpr std::int64_t priority = 100;
 
-  static constexpr bool Match(InferSession &, const OpInfo &) { return true; }
+  static constexpr bool Match(const OpInfo &) { return true; }
 
   OpKernel(InferSession &, const OpInfo &) {}
   virtual void Infer() = 0;
@@ -31,7 +31,7 @@ class KernelRegistry {
     virtual std::int64_t GetKernelId() const = 0;
     virtual std::int64_t GetPriority() const = 0;
 
-    virtual bool Match(InferSession &sess, const OpInfo &op_info) const = 0;
+    virtual bool Match(const OpInfo &) const = 0;
     virtual std::unique_ptr<OpKernel> BuildKernel(InferSession &,
                                                   const OpInfo &) = 0;
 
@@ -44,8 +44,8 @@ class KernelRegistry {
   public:
     std::int64_t GetKernelId() const override { return T::kernel_id; }
     std::int64_t GetPriority() const override { return T::priority; }
-    bool Match(InferSession &sess, const OpInfo &op_info) const override {
-      return T::Match(sess, op_info);
+    bool Match(const OpInfo &op_info) const override {
+      return T::Match(op_info);
     }
     std::unique_ptr<OpKernel> BuildKernel(InferSession &sess,
                                           const OpInfo &op_info) override {
@@ -67,7 +67,7 @@ public:
     }
     // TODO: kernel id match
     for (const auto &builder : iter->second) {
-      if (builder->Match(sess, op_info)) {
+      if (builder->Match(op_info)) {
         return builder->BuildKernel(sess, op_info);
       }
     }
