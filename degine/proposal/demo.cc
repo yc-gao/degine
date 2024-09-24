@@ -1,13 +1,10 @@
 #include <fstream>
-#include <stdexcept>
-#include <unordered_map>
 
 #include "fmt/core.h"
 
 #include "degine/ir/onnx.pb.h"
 #include "degine/proposal/InferSession.h"
 #include "degine/proposal/KernelRegistry.h"
-#include "degine/proposal/kernel.h"
 
 int main(int argc, char *argv[]) {
   onnx::ModelProto model_pb;
