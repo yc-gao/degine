@@ -13,7 +13,8 @@
 #include "degine/proposal/graph.h"
 
 class InferSession {
-  void InitBuffer(const GraphInfo &graph_info) {
+public:
+  InferSession(const GraphInfo &graph_info) {
     for (const auto &initializer : graph_info.initializer()) {
       auto ret =
           name2operand_.emplace(initializer.name(), OperandInfo(initializer));
@@ -58,9 +59,7 @@ class InferSession {
         buffers_.emplace_back(std::move(buffer));
       }
     }
-  }
 
-  void InitOp(const GraphInfo &graph_info) {
     for (const OpInfo &op_info : graph_info.node()) {
       auto op = KernelRegistry::Instance().BuildKernel(*this, op_info);
       if (!op) {
@@ -70,12 +69,6 @@ class InferSession {
       }
       kernels_.emplace_back(std::move(op));
     }
-  }
-
-public:
-  InferSession(const GraphInfo &graph_info) {
-    InitBuffer(graph_info);
-    InitOp(graph_info);
   }
 
   void Infer() {

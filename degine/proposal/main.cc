@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   sess.GetOperand("y")->Buffer(x.data());
   sess.Infer();
 
-  for (int i = 0; i < x.size();) {
+  for (auto i = 0ul; i < x.size();) {
     for (int j = 0; j < 16 && i < x.size(); j++, i++) {
       fmt::print(" {} ", x[i]);
     }
