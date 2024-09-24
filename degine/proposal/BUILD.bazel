@@ -7,7 +7,7 @@ cc_library(
 
 cc_binary(
     name = "demo",
-    srcs = ["demo.cc"],
+    srcs = glob(["*.cc"]),
     deps = [
         "@fmt",
         "@boost.core",

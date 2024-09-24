@@ -9,7 +9,7 @@
 #include "degine/ir/onnx.pb.h"
 
 class OperandInfo {
-  static constexpr std::array<std::int64_t, 13> dtype2size{
+  static constexpr std::array<std::int32_t, 13> dtype2size{
       -1, // UNDEFINED
       sizeof(float),
       sizeof(std::uint8_t),
@@ -55,12 +55,9 @@ public:
               std::back_inserter(elem_shape));
   }
 
-  void Buffer(void *buf) { buffer = buf; }
-  template <typename T = void> T *Buffer() {
-    return reinterpret_cast<T *>(buffer);
-  }
-
   std::string Name() const { return name; }
+
+  std::int32_t Dtype() const { return elem_type; }
 
   std::int64_t ElemCount() const {
     return std::accumulate(elem_shape.begin(), elem_shape.end(), 1,
@@ -68,6 +65,11 @@ public:
   }
 
   std::size_t ByteSize() const { return ElemCount() * dtype2size[elem_type]; }
+
+  void Buffer(void *buf) { buffer = buf; }
+  template <typename T = void> T *Buffer() {
+    return reinterpret_cast<T *>(buffer);
+  }
 
 private:
   std::string name;
