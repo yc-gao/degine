@@ -32,6 +32,7 @@ class KernelRegistry {
     virtual std::int64_t GetPriority() const = 0;
 
     virtual bool Match(const OpInfo &) const = 0;
+
     virtual std::unique_ptr<OpKernel> BuildKernel(InferSession &,
                                                   const OpInfo &) = 0;
 
@@ -47,6 +48,7 @@ class KernelRegistry {
     bool Match(const OpInfo &op_info) const override {
       return T::Match(op_info);
     }
+
     std::unique_ptr<OpKernel> BuildKernel(InferSession &sess,
                                           const OpInfo &op_info) override {
       return std::make_unique<T>(sess, op_info);
