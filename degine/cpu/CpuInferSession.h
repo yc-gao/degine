@@ -6,7 +6,12 @@
 
 class CpuInferSession {
 public:
-  CpuInferSession(const GraphModule &g) {}
+  CpuInferSession(const GraphModule &g) {
+    for (const OperandInfo *operand : g.Operands()) {
+    }
+    for (const OpInfo *op : g.Ops()) {
+    }
+  }
 
   void Infer() {
     for (auto &&kernel : kernels_) {

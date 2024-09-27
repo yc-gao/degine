@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include "boost/range/adaptor/transformed.hpp"
 #include "boost/range/join.hpp"
 
 #include "degine/ir/onnx.pb.h"
@@ -37,6 +38,11 @@ public:
     OpInfo op;
     return op;
   }
+
+  std::string OpType() const { return optype_; }
+
+private:
+  std::string optype_;
 };
 
 class GraphModule {
@@ -79,6 +85,18 @@ public:
         operand2op_[output] = ops_.back().get();
       }
     }
+  }
+
+  auto Operands() const {
+    return boost::make_iterator_range(operands_.begin(), operands_.end()) |
+           boost::adaptors::transformed(
+               [](const auto &ptr) { return ptr.get(); });
+  }
+
+  auto Ops() const {
+    return boost::make_iterator_range(ops_.begin(), ops_.end()) |
+           boost::adaptors::transformed(
+               [](const auto &ptr) { return ptr.get(); });
   }
 
 private:
