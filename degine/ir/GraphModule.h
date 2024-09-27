@@ -1,10 +1,12 @@
 #pragma once
 
 #include <algorithm>
+#include <array>
 #include <cstddef>
 #include <cstdint>
 #include <iterator>
 #include <memory>
+#include <numeric>
 #include <unordered_map>
 #include <vector>
 
@@ -14,6 +16,33 @@
 #include "degine/ir/onnx.pb.h"
 
 class OperandInfo {
+  static constexpr std::array dtype2size = {
+      0ul,
+      sizeof(float),         // FLOAT
+      sizeof(std::uint16_t), // UINT8
+      sizeof(std::int8_t),   // INT8
+      sizeof(std::uint16_t), // UINT16
+      sizeof(std::int16_t),  // INT16
+      sizeof(std::int32_t),  // INT32
+      sizeof(std::int64_t),  // INT64
+      0ul,                   // STRING
+      0ul,                   // BOOL
+      0ul,                   // FLOAT16
+      sizeof(double),        // DOUBLE
+      sizeof(std::uint32_t), // UINT32
+      sizeof(std::uint64_t), // UINT64
+      0ul,                   // COMPLEX64
+      0ul,                   // COMPLEX128
+      0ul,                   // BFLOAT16
+      0ul,                   // FLOAT8E4M3FN
+      0ul,                   // FLOAT8E4M3FNUZ
+      0ul,                   // FLOAT8E5M2
+      0ul,                   // FLOAT8E5M2FNUZ
+      0ul,                   // UINT4
+      0ul,                   // INT4
+      0ul,                   // FLOAT4E2M1
+  };
+
 public:
   enum DataType {
     UNDEFINED = onnx::TensorProto_DataType_UNDEFINED,
@@ -60,7 +89,12 @@ public:
 
   void *Buffer() { return raw_buffer_.get(); }
   const void *Buffer() const { return raw_buffer_.get(); }
-  std::size_t ByteSize() const { return 0; }
+
+  std::size_t ElemCount() const {
+    return std::accumulate(dims_.begin(), dims_.end(), 1,
+                           std::multiplies<std::size_t>());
+  }
+  std::size_t ByteSize() const { return dtype2size[dtype_] * ElemCount(); }
 
 private:
   std::string name_;
