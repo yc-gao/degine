@@ -1,3 +1,38 @@
-#include "degine/cpu/OpKernel.h"
+#include "boost/range/adaptor/transformed.hpp"
+#include "boost/range/algorithm/copy.hpp"
 
-OpKernel::OpKernel(CpuInferSession &sess, const OpInfo &opinfo) {}
+#include "degine/cpu/CpuInferSession.h"
+#include "degine/cpu/OpKernel.h"
+#include "degine/ir/GraphModule.h"
+
+OpKernel::OpKernel(CpuInferSession &sess, const OpInfo &opinfo) {
+  for (auto s = 0ul, e = opinfo.InputCount(); s < e; s++) {
+    auto i = opinfo.Input(s);
+
+    Operand operand;
+    operand.name_ = i->Name();
+    operand.dtype_ = i->Dtype();
+    boost::copy(
+        boost::counting_range(0ul, i->DimCount()) |
+            boost::adaptors::transformed([i](auto idx) { return i->Dim(idx); }),
+        std::back_inserter(operand.dims_));
+    operand.buffer_ = sess.GetBuffer(i->Name());
+
+    ctx_.inputs_.emplace_back(std::move(operand));
+  }
+
+  for (auto s = 0ul, e = opinfo.OutputCount(); s < e; s++) {
+    auto o = opinfo.Output(s);
+
+    Operand operand;
+    operand.name_ = o->Name();
+    operand.dtype_ = o->Dtype();
+    boost::copy(
+        boost::counting_range(0ul, o->DimCount()) |
+            boost::adaptors::transformed([o](auto idx) { return o->Dim(idx); }),
+        std::back_inserter(operand.dims_));
+    operand.buffer_ = sess.GetBuffer(o->Name());
+
+    ctx_.outputs_.emplace_back(std::move(operand));
+  }
+}

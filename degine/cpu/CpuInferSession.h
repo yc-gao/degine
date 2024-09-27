@@ -42,6 +42,14 @@ public:
     }
   }
 
+  void *GetBuffer(const std::string &name) { return name2buffer_.at(name); }
+  const void *GetBuffer(const std::string &name) const {
+    return name2buffer_.at(name);
+  }
+  void SetBuffer(const std::string &name, void *buffer) {
+    name2buffer_[name] = buffer;
+  }
+
   void Infer() {
     for (auto &&kernel : kernels_) {
       kernel->Infer();
@@ -52,6 +60,6 @@ private:
   std::vector<std::unique_ptr<char[]>> buffers_;
   std::vector<std::unique_ptr<OpKernel>> kernels_;
 
-  std::unordered_map<std::string, char *> name2buffer_;
+  std::unordered_map<std::string, void *> name2buffer_;
   std::unordered_map<std::string, OpKernel *> name2kernel_;
 };

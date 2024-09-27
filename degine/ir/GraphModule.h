@@ -26,12 +26,18 @@ public:
 
   std::string Name() const { return name_; }
 
+  int Dtype() const { return dtype_; }
+
+  std::size_t Dim(int idx) const { return dims_[idx]; }
+  std::size_t DimCount() const { return dims_.size(); }
+
   std::size_t ByteSize() const { return 0; }
 
 private:
   std::string name_;
+
   int dtype_;
-  std::vector<std::int64_t> dims_;
+  std::vector<std::size_t> dims_;
 
   std::unique_ptr<char[]> raw_buffer_;
 };
@@ -44,6 +50,12 @@ public:
     OpInfo op;
     return op;
   }
+
+  std::size_t InputCount() const { return 0; }
+  const OperandInfo *Input(int idx) const { return nullptr; }
+
+  std::size_t OutputCount() const { return 0; }
+  const OperandInfo *Output(int idx) const { return nullptr; }
 
   std::string Name() const { return name_; }
   std::int64_t GetKernelId() const { return -1; }
