@@ -17,6 +17,11 @@
 //   virtual void Infer() = 0;
 // };
 
+// class OpInfo {
+// public:
+//   std::string OpType() const;
+// };
+
 template <typename OpKernel, typename InferSession, typename OpInfo>
 class KernelRegistry {
 
