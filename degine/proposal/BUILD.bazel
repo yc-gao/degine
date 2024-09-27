@@ -1,19 +1,10 @@
 package(default_visibility = ["//visibility:public"])
 
-cc_library(
-    name = "headers",
-    hdrs = glob(["*.h"]),
-)
-
 cc_binary(
     name = "demo",
     srcs = glob(["*.cc"]),
     deps = [
-        "@boost.core",
-        "@boost.range",
-        "@boost.preprocessor",
-        "@fmt",
         "//degine/ir",
-        ":headers"
+        "//degine/cpu",
     ],
 )

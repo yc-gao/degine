@@ -10,6 +10,7 @@ cc_library(
         "@boost.preprocessor",
         "@fmt",
         "//degine/common",
+        "//degine/ir",
     ],
 )
 

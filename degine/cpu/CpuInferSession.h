@@ -2,9 +2,12 @@
 #include <vector>
 
 #include "degine/cpu/OpKernel.h"
+#include "degine/ir/GraphModule.h"
 
 class CpuInferSession {
 public:
+  CpuInferSession(const GraphModule &g) {}
+
   void Infer() {
     for (auto &&kernel : kernels_) {
       kernel->Infer();
@@ -14,9 +17,3 @@ public:
 private:
   std::vector<std::unique_ptr<OpKernel>> kernels_;
 };
-
-int main(int argc, char *argv[]) {
-  CpuInferSession sess;
-  sess.Infer();
-  return 0;
-}
