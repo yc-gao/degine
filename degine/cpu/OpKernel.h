@@ -6,7 +6,7 @@
 
 #include "boost/preprocessor/cat.hpp"
 
-#include "degine/cpu/KernelRegistry.h"
+#include "degine/common/KernelRegistry.h"
 
 class CpuInferSession;
 class OpInfo;

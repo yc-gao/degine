@@ -9,6 +9,7 @@ cc_library(
         "@boost.range",
         "@boost.preprocessor",
         "@fmt",
+        "//degine/common",
     ],
 )
 
