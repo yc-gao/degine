@@ -76,10 +76,62 @@ public:
 
   static OperandInfo FromOnnx(const onnx::ValueInfoProto &vinfo_pb) {
     OperandInfo operand;
+    operand.name_ = vinfo_pb.name();
+
+    auto &&type_pb = vinfo_pb.type();
+    if (type_pb.has_tensor_type()) {
+      auto &&tensor_type_pb = type_pb.tensor_type();
+      operand.dtype_ = tensor_type_pb.elem_type();
+
+      auto &&shape_pb = tensor_type_pb.shape();
+      std::transform(shape_pb.dim().begin(), shape_pb.dim().end(),
+                     std::back_inserter(operand.dims_), [](const auto &dim) {
+                       if (dim.has_dim_value()) {
+                         return dim.dim_value();
+                       }
+                       return 0l;
+                     });
+    } else {
+      throw std::runtime_error(
+          fmt::format("can not parse valueinfo, name {}", vinfo_pb.name()));
+    }
     return operand;
   }
   static OperandInfo FromOnnx(const onnx::TensorProto &initializer_pb) {
     OperandInfo operand;
+    operand.name_ = initializer_pb.name();
+    operand.dtype_ = initializer_pb.data_type();
+    operand.dims_ = std::vector<std::size_t>(initializer_pb.dims().begin(),
+                                             initializer_pb.dims().end());
+    operand.raw_buffer_ = std::unique_ptr<char[]>(new char[operand.ByteSize()]);
+    switch (initializer_pb.data_type()) {
+    case DataType::FLOAT: {
+      std::memcpy(operand.raw_buffer_.get(), initializer_pb.float_data().data(),
+                  operand.ByteSize());
+    } break;
+    case DataType::DOUBLE: {
+      std::memcpy(operand.raw_buffer_.get(),
+                  initializer_pb.double_data().data(), operand.ByteSize());
+    } break;
+    case DataType::INT32: {
+      std::memcpy(operand.raw_buffer_.get(), initializer_pb.int32_data().data(),
+                  operand.ByteSize());
+    } break;
+    case DataType::UINT32:
+    case DataType::UINT64: {
+      std::memcpy(operand.raw_buffer_.get(),
+                  initializer_pb.uint64_data().data(), operand.ByteSize());
+    } break;
+    case DataType::INT64: {
+      std::memcpy(operand.raw_buffer_.get(), initializer_pb.int64_data().data(),
+                  operand.ByteSize());
+    } break;
+    default:
+      throw std::runtime_error(
+          fmt::format("can not parse TensorProto, name {} type{}",
+                      initializer_pb.name(), int(initializer_pb.data_type())));
+      break;
+    }
     return operand;
   }
 
