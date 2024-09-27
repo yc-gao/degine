@@ -73,7 +73,11 @@ public:
 
       ops_.emplace_back(std::make_unique<OpInfo>(
           OpInfo::FromOnnx(node_pb, std::move(inputs), std::move(outputs))));
+
       name2op_[node_pb.name()] = ops_.back().get();
+      for (OperandInfo *output : outputs) {
+        operand2op_[output] = ops_.back().get();
+      }
     }
   }
 
@@ -84,4 +88,5 @@ private:
   // index for objects
   std::unordered_map<std::string, OperandInfo *> name2operand_;
   std::unordered_map<std::string, OpInfo *> name2op_;
+  std::unordered_map<OperandInfo *, OpInfo *> operand2op_;
 };
