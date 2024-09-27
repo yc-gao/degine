@@ -3,11 +3,13 @@
 #include <any>
 #include <cstddef>
 #include <cstdint>
+#include <numeric>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
 #include "boost/preprocessor/cat.hpp"
+#include "boost/range/counting_range.hpp"
 
 #include "degine/common/KernelRegistry.h"
 
@@ -25,10 +27,23 @@ public:
 
 protected:
   struct Operand {
-    std::size_t ElemCount() const { return 0; }
+    int DimCount() const { return dims_.size(); }
+    std::int64_t Dim(int idx) const { return dims_[idx]; }
+
+    std::size_t ElemCount() const {
+      auto counter = boost::counting_range(0, DimCount());
+      return std::transform_reduce(
+          counter.begin(), counter.end(), 1,
+          [this](const auto &a, const auto &b) { return a * b; },
+          [this](const auto &idx) { return Dim(idx); });
+    }
 
     template <typename T> T *Buffer() { return nullptr; }
     template <typename T> const T *Buffer() const { return nullptr; }
+
+    std::string name_;
+    std::vector<std::int64_t> dims_;
+    void *buffer_;
   };
 
   class KernelInferCtx {
