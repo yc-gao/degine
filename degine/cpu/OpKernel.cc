@@ -35,4 +35,6 @@ OpKernel::OpKernel(CpuInferSession &sess, const OpInfo &opinfo) {
 
     ctx_.outputs_.emplace_back(std::move(operand));
   }
+
+  ctx_.attrs_ = opinfo.Attrs();
 }

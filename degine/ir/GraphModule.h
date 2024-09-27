@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <any>
 #include <array>
 #include <cstddef>
 #include <cstdint>
@@ -111,22 +112,45 @@ public:
                          std::vector<OperandInfo *> inputs,
                          std::vector<OperandInfo *> outputs) {
     OpInfo op;
+    op.name_ = node_pb.name();
+    op.optype_ = node_pb.op_type();
+    op.inputs_ = std::move(inputs);
+    op.outputs_ = std::move(outputs);
     return op;
   }
-
-  std::size_t InputCount() const { return 0; }
-  const OperandInfo *Input(int idx) const { return nullptr; }
-
-  std::size_t OutputCount() const { return 0; }
-  const OperandInfo *Output(int idx) const { return nullptr; }
-
   std::string Name() const { return name_; }
-  std::int64_t GetKernelId() const { return -1; }
   std::string OpType() const { return optype_; }
+
+  const OperandInfo *Input(int idx) const { return inputs_[idx]; }
+  OperandInfo *Input(int idx) { return inputs_[idx]; }
+  std::size_t InputCount() const { return inputs_.size(); }
+
+  const OperandInfo *Output(int idx) const { return outputs_[idx]; }
+  OperandInfo *Output(int idx) { return outputs_[idx]; }
+  std::size_t OutputCount() const { return outputs_.size(); }
+
+  auto Attrs() const { return attrs_; }
+  auto Attrs() { return attrs_; }
+
+  template <typename T> const T &Attr(const std::string &name) const {
+    return std::any_cast<const T &>(attrs_.at(name));
+  }
+  template <typename T> T &Attr(const std::string &name) {
+    return std::any_cast<T &>(attrs_.at(name));
+  }
+
+  std::int64_t GetKernelId() const { return kid_; }
 
 private:
   std::string name_;
   std::string optype_;
+
+  std::vector<OperandInfo *> inputs_;
+  std::vector<OperandInfo *> outputs_;
+
+  std::unordered_map<std::string, std::any> attrs_;
+
+  std::int64_t kid_{-1};
 };
 
 class GraphModule {
