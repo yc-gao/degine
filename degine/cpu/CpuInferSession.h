@@ -1,3 +1,4 @@
+#include <cstring>
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
@@ -20,6 +21,7 @@ public:
             fmt::format("can not index mem for operand {}", operand->Name()));
       }
 
+      std::memcpy(buffer.get(), operand->Buffer(), operand->ByteSize());
       buffers_.emplace_back(std::move(buffer));
     }
 

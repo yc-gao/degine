@@ -15,6 +15,33 @@
 
 class OperandInfo {
 public:
+  enum DataType {
+    UNDEFINED = onnx::TensorProto_DataType_UNDEFINED,
+    FLOAT = onnx::TensorProto_DataType_FLOAT,
+    UINT8 = onnx::TensorProto_DataType_UINT8,
+    INT8 = onnx::TensorProto_DataType_INT8,
+    UINT16 = onnx::TensorProto_DataType_UINT16,
+    INT16 = onnx::TensorProto_DataType_INT16,
+    INT32 = onnx::TensorProto_DataType_INT32,
+    INT64 = onnx::TensorProto_DataType_INT64,
+    STRING = onnx::TensorProto_DataType_STRING,
+    BOOL = onnx::TensorProto_DataType_BOOL,
+    FLOAT16 = onnx::TensorProto_DataType_FLOAT16,
+    DOUBLE = onnx::TensorProto_DataType_DOUBLE,
+    UINT32 = onnx::TensorProto_DataType_UINT32,
+    UINT64 = onnx::TensorProto_DataType_UINT64,
+    COMPLEX64 = onnx::TensorProto_DataType_COMPLEX64,
+    COMPLEX128 = onnx::TensorProto_DataType_COMPLEX128,
+    BFLOAT16 = onnx::TensorProto_DataType_BFLOAT16,
+    FLOAT8E4M3FN = onnx::TensorProto_DataType_FLOAT8E4M3FN,
+    FLOAT8E4M3FNUZ = onnx::TensorProto_DataType_FLOAT8E4M3FNUZ,
+    FLOAT8E5M2 = onnx::TensorProto_DataType_FLOAT8E5M2,
+    FLOAT8E5M2FNUZ = onnx::TensorProto_DataType_FLOAT8E5M2FNUZ,
+    UINT4 = onnx::TensorProto_DataType_UINT4,
+    INT4 = onnx::TensorProto_DataType_INT4,
+    FLOAT4E2M1 = onnx::TensorProto_DataType_FLOAT4E2M1,
+  };
+
   static OperandInfo FromOnnx(const onnx::ValueInfoProto &vinfo_pb) {
     OperandInfo operand;
     return operand;
@@ -31,6 +58,8 @@ public:
   std::size_t Dim(int idx) const { return dims_[idx]; }
   std::size_t DimCount() const { return dims_.size(); }
 
+  void *Buffer() { return raw_buffer_.get(); }
+  const void *Buffer() const { return raw_buffer_.get(); }
   std::size_t ByteSize() const { return 0; }
 
 private:
