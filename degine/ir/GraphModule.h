@@ -8,11 +8,13 @@
 #include <iterator>
 #include <memory>
 #include <numeric>
+#include <stdexcept>
 #include <unordered_map>
 #include <vector>
 
 #include "boost/range/adaptor/transformed.hpp"
 #include "boost/range/join.hpp"
+#include "fmt/format.h"
 
 #include "degine/ir/onnx.pb.h"
 
@@ -116,6 +118,21 @@ public:
     op.optype_ = node_pb.op_type();
     op.inputs_ = std::move(inputs);
     op.outputs_ = std::move(outputs);
+    for (const onnx::AttributeProto &attr : node_pb.attribute()) {
+      switch (attr.type()) {
+      case onnx::AttributeProto::INT: {
+        op.attrs_.emplace(attr.name(), attr.i());
+      } break;
+      case onnx::AttributeProto::FLOAT: {
+        op.attrs_.emplace(attr.name(), attr.f());
+      } break;
+      default:
+        throw std::runtime_error(
+            fmt::format("ca not parse node attr, name {} type {}", attr.name(),
+                        int(attr.type())));
+        break;
+      }
+    }
     return op;
   }
   std::string Name() const { return name_; }
