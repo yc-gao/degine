@@ -16,7 +16,9 @@ cc_proto_library(
 cc_library(
     name = "ir",
     hdrs = glob(["*.h"]),
+    srcs = glob(["*.cc"]),
     deps = [
+        "@boost.range",
         "@fmt",
         ":onnx_cc_proto",
     ]
