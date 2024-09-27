@@ -1,7 +1,10 @@
 #pragma once
 
+#include <any>
 #include <cstddef>
 #include <cstdint>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "boost/preprocessor/cat.hpp"
@@ -33,9 +36,15 @@ protected:
     const Operand Input(int idx) { return inputs_[idx]; }
     Operand Output(int idx) { return outputs_[idx]; }
 
+    template <typename T> const T &Attr(const std::string &key) const {
+      return std::any_cast<const T &>(attrs_.at(key));
+    }
+
   private:
     std::vector<Operand> inputs_;
     std::vector<Operand> outputs_;
+
+    std::unordered_map<std::string, std::any> attrs_;
   };
   virtual void Infer(KernelInferCtx &) = 0;
 
