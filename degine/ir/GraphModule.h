@@ -157,7 +157,7 @@ private:
   int dtype_;
   std::vector<std::size_t> dims_;
 
-  std::unique_ptr<char[]> raw_buffer_;
+  std::unique_ptr<char[]> raw_buffer_{nullptr};
 };
 
 class OpInfo {
