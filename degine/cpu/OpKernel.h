@@ -27,6 +27,8 @@ public:
 
 protected:
   struct Operand {
+    int Dtype() const { return dtype_; }
+
     int DimCount() const { return dims_.size(); }
     std::int64_t Dim(int idx) const { return dims_[idx]; }
 
@@ -38,10 +40,16 @@ protected:
           [this](const auto &idx) { return Dim(idx); });
     }
 
-    template <typename T> T *Buffer() { return nullptr; }
-    template <typename T> const T *Buffer() const { return nullptr; }
+    template <typename T = void> T *Buffer() {
+      return reinterpret_cast<T *>(buffer_);
+    }
+    template <typename T = void> const T *Buffer() const {
+      return reinterpret_cast<T *>(buffer_);
+    }
 
     std::string name_;
+
+    int dtype_;
     std::vector<std::int64_t> dims_;
     void *buffer_;
   };
