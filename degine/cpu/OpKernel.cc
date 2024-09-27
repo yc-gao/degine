@@ -16,7 +16,7 @@ OpKernel::OpKernel(CpuInferSession &sess, const OpInfo &opinfo) {
         boost::counting_range(0ul, i->DimCount()) |
             boost::adaptors::transformed([i](auto idx) { return i->Dim(idx); }),
         std::back_inserter(operand.dims_));
-    operand.buffer_ = sess.GetBuffer(i->Name());
+    operand.buffer_ = &sess.GetBuffer(i->Name());
 
     ctx_.inputs_.emplace_back(std::move(operand));
   }
@@ -31,10 +31,21 @@ OpKernel::OpKernel(CpuInferSession &sess, const OpInfo &opinfo) {
         boost::counting_range(0ul, o->DimCount()) |
             boost::adaptors::transformed([o](auto idx) { return o->Dim(idx); }),
         std::back_inserter(operand.dims_));
-    operand.buffer_ = sess.GetBuffer(o->Name());
+    operand.buffer_ = &sess.GetBuffer(o->Name());
 
     ctx_.outputs_.emplace_back(std::move(operand));
   }
 
   ctx_.attrs_ = opinfo.Attrs();
+}
+
+template <> void *OpKernel::Operand::Buffer() {
+  return reinterpret_cast<CpuInferSession::Buffer *>(buffer_)->buffer;
+}
+template <> const void *OpKernel::Operand::Buffer() const {
+  return reinterpret_cast<CpuInferSession::Buffer *>(buffer_)->buffer;
+}
+
+std::size_t OpKernel::Operand::ByteSize() const {
+  return reinterpret_cast<CpuInferSession::Buffer *>(buffer_)->size;
 }

@@ -18,8 +18,8 @@ int main(int argc, char *argv[]) {
 
   std::vector<float> x(28 * 28, 1);
 
-  sess.SetBuffer("x", x.data());
-  sess.SetBuffer("y", x.data());
+  sess.GetBuffer("x").buffer = x.data();
+  sess.GetBuffer("y").buffer = x.data();
   sess.Infer();
 
   for (auto i = 0ul; i < x.size();) {

@@ -43,11 +43,12 @@ protected:
     }
 
     template <typename T = void> T *Buffer() {
-      return reinterpret_cast<T *>(buffer_);
+      return reinterpret_cast<T *>(Buffer<void>());
     }
     template <typename T = void> const T *Buffer() const {
-      return reinterpret_cast<T *>(buffer_);
+      return reinterpret_cast<T *>(Buffer<void>());
     }
+    std::size_t ByteSize() const;
 
     std::string name_;
 
