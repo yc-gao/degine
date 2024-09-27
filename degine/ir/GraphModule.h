@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <iterator>
 #include <memory>
@@ -23,7 +24,12 @@ public:
     return operand;
   }
 
+  std::string Name() const { return name_; }
+
+  std::size_t ByteSize() const { return 0; }
+
 private:
+  std::string name_;
   int dtype_;
   std::vector<std::int64_t> dims_;
 
@@ -39,9 +45,12 @@ public:
     return op;
   }
 
+  std::string Name() const { return name_; }
+  std::int64_t GetKernelId() const { return -1; }
   std::string OpType() const { return optype_; }
 
 private:
+  std::string name_;
   std::string optype_;
 };
 

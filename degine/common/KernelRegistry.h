@@ -19,6 +19,7 @@
 
 // class OpInfo {
 // public:
+//   std::int64_t GetKernelId() const;
 //   std::string OpType() const;
 // };
 
@@ -66,7 +67,8 @@ public:
     std::sort(tmp.begin(), tmp.end(),
               [](const auto &a, const auto &b) { return *a < *b; });
   }
-  std::unique_ptr<OpKernel> BuildKernel(InferSession &sess, OpInfo &opinfo) {
+  std::unique_ptr<OpKernel> BuildKernel(InferSession &sess,
+                                        const OpInfo &opinfo) {
     auto iter = optype2builder_.find(opinfo.OpType());
     if (iter == optype2builder_.end()) {
       return nullptr;
