@@ -1,7 +1,5 @@
 module(name = "degine", version = "0.0.1")
 
-bazel_dep(name = "bazel_skylib", version = "1.7.1")
-
 bazel_dep(name = "fmt", version = "11.0.2")
 bazel_dep(name = "nlohmann_json", version = "3.11.3")
 
