@@ -18,8 +18,8 @@ cc_library(
     hdrs = glob(["*.h"]),
     srcs = glob(["*.cc"]),
     deps = [
-        "@fmt",
         "@boost.range",
+        "@fmt",
         ":onnx_cc_proto",
     ]
 )
