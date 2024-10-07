@@ -116,6 +116,8 @@
     "https://bcr.bazel.build/modules/jsoncpp/1.9.5/MODULE.bazel": "31271aedc59e815656f5736f282bb7509a97c7ecb43e927ac1a37966e0578075",
     "https://bcr.bazel.build/modules/jsoncpp/1.9.5/source.json": "4108ee5085dd2885a341c7fab149429db457b3169b86eb081fa245eadf69169d",
     "https://bcr.bazel.build/modules/libpfm/4.11.0/MODULE.bazel": "45061ff025b301940f1e30d2c16bea596c25b176c8b6b3087e92615adbd52902",
+    "https://bcr.bazel.build/modules/llvm-project/17.0.3/MODULE.bazel": "e5a5008c01aac00bade49edc80c8d425a92e93f7d5352847a38931f58a03ac2f",
+    "https://bcr.bazel.build/modules/llvm-project/17.0.3/source.json": "ab97cc11387c3d7a43138b6ac621e29d9a967daf2934993e78f9447405653cf6",
     "https://bcr.bazel.build/modules/nlohmann_json/3.11.3/MODULE.bazel": "87023db2f55fc3a9949c7b08dc711fae4d4be339a80a99d04453c4bb3998eefc",
     "https://bcr.bazel.build/modules/nlohmann_json/3.11.3/source.json": "296c63a90c6813e53b3812d24245711981fc7e563d98fe15625f55181494488a",
     "https://bcr.bazel.build/modules/platforms/0.0.10/MODULE.bazel": "8cb8efaf200bdeb2150d93e162c40f388529a25852b332cec879373771e48ed5",
@@ -144,8 +146,6 @@
     "https://bcr.bazel.build/modules/rules_cc/0.0.8/MODULE.bazel": "964c85c82cfeb6f3855e6a07054fdb159aced38e99a5eecf7bce9d53990afa3e",
     "https://bcr.bazel.build/modules/rules_cc/0.0.9/MODULE.bazel": "836e76439f354b89afe6a911a7adf59a6b2518fafb174483ad78a2a2fde7b1c5",
     "https://bcr.bazel.build/modules/rules_cc/0.0.9/source.json": "1f1ba6fea244b616de4a554a0f4983c91a9301640c8fe0dd1d410254115c8430",
-    "https://bcr.bazel.build/modules/rules_cuda/0.2.3/MODULE.bazel": "34f74fba6882781153461e62aded821ed3e5197f15e0f2b9b3eef76c9be0f44c",
-    "https://bcr.bazel.build/modules/rules_cuda/0.2.3/source.json": "a2e128ec4699c65db24d9305215090d95bbd0cbb98e98058f82328f194a8ec68",
     "https://bcr.bazel.build/modules/rules_foreign_cc/0.9.0/MODULE.bazel": "c9e8c682bf75b0e7c704166d79b599f93b72cfca5ad7477df596947891feeef6",
     "https://bcr.bazel.build/modules/rules_fuzzing/0.5.2/MODULE.bazel": "40c97d1144356f52905566c55811f13b299453a14ac7769dfba2ac38192337a8",
     "https://bcr.bazel.build/modules/rules_fuzzing/0.5.2/source.json": "c8b1e2c717646f1702290959a3302a178fb639d987ab61d548105019f11e527e",
@@ -592,31 +592,6 @@
         "recordedRepoMappingEntries": [
           [
             "rules_buf~",
-            "bazel_tools",
-            "bazel_tools"
-          ]
-        ]
-      }
-    },
-    "@@rules_cuda~//cuda:extensions.bzl%toolchain": {
-      "general": {
-        "bzlTransitiveDigest": "dEVMxsyORlJCS6ZNgw3SO73mnOvr5ZVKQjjTUMyjONA=",
-        "usagesDigest": "PyMKCwWJMRaSylkcTq46FiR02diFeyY9V/rM8FftBIY=",
-        "recordedFileInputs": {},
-        "recordedDirentsInputs": {},
-        "envVariables": {},
-        "generatedRepoSpecs": {
-          "local_cuda": {
-            "bzlFile": "@@rules_cuda~//cuda/private:repositories.bzl",
-            "ruleClassName": "local_cuda",
-            "attributes": {
-              "toolkit_path": ""
-            }
-          }
-        },
-        "recordedRepoMappingEntries": [
-          [
-            "rules_cuda~",
             "bazel_tools",
             "bazel_tools"
           ]

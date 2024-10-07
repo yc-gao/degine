@@ -6,10 +6,10 @@ cc_library(
     srcs = glob(["*.cc", "kernels/*.cc"]),
     alwayslink = True,
     deps = [
+        "@fmt",
         "@boost.core",
         "@boost.range",
         "@boost.preprocessor",
-        "@fmt",
         "//degine/common",
         "//degine/ir",
     ],
