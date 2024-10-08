@@ -7,5 +7,40 @@ bazel_dep(name = "boost.preprocessor", version = "1.83.0")
 bazel_dep(name = "fmt", version = "11.0.2")
 bazel_dep(name = "nlohmann_json", version = "3.11.3")
 bazel_dep(name = "protobuf", version = "28.2")
-bazel_dep(name = "llvm-project", version = "17.0.3")
+
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "platforms", version = "0.0.10")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "llvm-raw",
+    urls = [
+        "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-19.1.1.zip"
+    ],
+    sha256 = "779e1bd0055a013ed339abdbb99db50558be0fe6f138b31fc6476eaf0ffaa7d2",
+    strip_prefix = "llvm-project-llvmorg-19.1.1",
+    build_file_content = "# empty",
+)
+http_archive(
+    name = "llvm_zlib",
+    urls = [
+        "https://github.com/zlib-ng/zlib-ng/archive/refs/tags/2.0.7.zip",
+    ],
+    sha256 = "e36bb346c00472a1f9ff2a0a4643e590a254be6379da7cddd9daeb9a7f296731",
+    strip_prefix = "zlib-ng-2.0.7",
+    build_file = "@llvm-raw//utils/bazel/third_party_build:zlib-ng.BUILD",
+)
+http_archive(
+    name = "llvm_zstd",
+    urls = [
+        "https://github.com/facebook/zstd/releases/download/v1.5.2/zstd-1.5.2.tar.gz",
+    ],
+    sha256 = "7c42d56fac126929a6a85dbc73ff1db2411d04f104fae9bdea51305663a83fd0",
+    strip_prefix = "zstd-1.5.2",
+    build_file = "@llvm-raw//utils/bazel/third_party_build:zstd.BUILD",
+)
+
+llvm_configure = use_repo_rule("//3rdparty/llvm:workspace.bzl", "llvm_configure")
+llvm_configure(name = "llvm-project")
 
