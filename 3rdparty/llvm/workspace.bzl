@@ -1,3 +1,7 @@
+# This file is licensed under the Apache License v2.0 with LLVM Exceptions.
+# See https://llvm.org/LICENSE.txt for license information.
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 """Helper macros to configure the LLVM overlay project."""
 
 # Directory of overlay files relative to WORKSPACE
@@ -182,4 +186,3 @@ llvm_configure = repository_rule(
         "targets": attr.string_list(default = DEFAULT_TARGETS),
     },
 )
-

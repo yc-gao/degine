@@ -3,6 +3,8 @@ module(name = "degine", version = "0.0.1")
 bazel_dep(name = "bazel_skylib", version = "1.7.1")
 bazel_dep(name = "platforms", version = "0.0.10")
 
+bazel_dep(name = "rules_cc", version = "0.0.12")
+
 bazel_dep(name = "boost.core", version = "1.83.0")
 bazel_dep(name = "boost.range", version = "1.83.0")
 bazel_dep(name = "boost.preprocessor", version = "1.83.0")
@@ -16,10 +18,10 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 http_archive(
     name = "llvm-raw",
     urls = [
-        "https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-19.1.1.zip"
+        "https://github.com/llvm/llvm-project/archive/00128a20eec27246719d73ba427bf821883b00b4.tar.gz"
     ],
-    sha256 = "779e1bd0055a013ed339abdbb99db50558be0fe6f138b31fc6476eaf0ffaa7d2",
-    strip_prefix = "llvm-project-llvmorg-19.1.1",
+    sha256 = "9fff2ccb6c262f3d5e2f98c281a0b99a585daee83742e1599709ff61cfc222af",
+    strip_prefix = "llvm-project-00128a20eec27246719d73ba427bf821883b00b4",
     build_file_content = "# empty",
 )
 http_archive(
@@ -45,3 +47,11 @@ llvm_configure = use_repo_rule("//3rdparty/llvm:workspace.bzl", "llvm_configure"
 # llvm_configure = use_repo_rule("@llvm-raw//utils/bazel:configure.bzl", "llvm_configure")
 llvm_configure(name = "llvm-project")
 
+http_archive(
+    name = "stablehlo",
+    urls = [
+        "https://github.com/openxla/stablehlo/archive/refs/tags/v1.7.7.zip"
+    ],
+    sha256 = "ab9a6bd465744e964d2249a88ddcb40463873fab1a485b13c3efba183d4707e1",
+    strip_prefix = "stablehlo-1.7.7",
+)
