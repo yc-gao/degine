@@ -6,8 +6,7 @@
 #include <unordered_map>
 #include <vector>
 
-// class OpKernel {
-// public:
+// struct OpKernel {
 //   static constexpr std::int64_t kernel_id = -1;
 //   static constexpr std::int64_t priority = 100;
 //
@@ -17,8 +16,7 @@
 //   virtual void Infer() = 0;
 // };
 
-// class OpInfo {
-// public:
+// struct OpInfo {
 //   std::int64_t GetKernelId() const;
 //   std::string OpType() const;
 // };
