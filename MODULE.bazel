@@ -18,10 +18,10 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 http_archive(
     name = "llvm-raw",
     urls = [
-        "https://github.com/llvm/llvm-project/archive/00128a20eec27246719d73ba427bf821883b00b4.tar.gz"
+        "https://github.com/llvm/llvm-project/archive/585523750e2bbe374d1cb3bf4ff9d53de29b9593.zip",
     ],
-    sha256 = "9fff2ccb6c262f3d5e2f98c281a0b99a585daee83742e1599709ff61cfc222af",
-    strip_prefix = "llvm-project-00128a20eec27246719d73ba427bf821883b00b4",
+    sha256 = "98932f826a6f4b3c0bb929c8b28b7278232273bee7667a3a31019cab917372a3",
+    strip_prefix = "llvm-project-585523750e2bbe374d1cb3bf4ff9d53de29b9593",
     build_file_content = "# empty",
 )
 http_archive(
@@ -50,8 +50,8 @@ llvm_configure(name = "llvm-project")
 http_archive(
     name = "stablehlo",
     urls = [
-        "https://github.com/openxla/stablehlo/archive/refs/tags/v1.7.7.zip"
+        "https://github.com/openxla/stablehlo/archive/c28d55e91b4a5daaff18a33ce7e9bbd0f171256a.zip",
     ],
-    sha256 = "ab9a6bd465744e964d2249a88ddcb40463873fab1a485b13c3efba183d4707e1",
-    strip_prefix = "stablehlo-1.7.7",
+    sha256 = "e9e2456e352a1169345bf128a7baab2232b33ae111ecc59a6b356f2aaac0a71f",
+    strip_prefix = "stablehlo-c28d55e91b4a5daaff18a33ce7e9bbd0f171256a",
 )

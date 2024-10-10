@@ -6,5 +6,10 @@ cc_binary(
         "@llvm-project//mlir:AllPassesAndDialects",
         "@llvm-project//mlir:AllToLLVMIRTranslations",
         "@llvm-project//mlir:MlirOptLib",
+        "@stablehlo//:stablehlo_passes",
+        "@stablehlo//:linalg_passes",
+        "@stablehlo//:tosa_passes",
+        "@stablehlo//:interpreter_passes",
+        "@stablehlo//:register",
     ],
 )
