@@ -20,7 +20,7 @@ gentbl_cc_library(
 
 cc_library(
     name = "degine_passes",
-    srcs = ["Passes.cc"],
+    srcs = glob(["*.cc"]),
     hdrs = [
         "Passes.h",
     ],
