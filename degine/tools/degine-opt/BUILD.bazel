@@ -1,35 +1,3 @@
-load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "gentbl_filegroup", "td_library")
-
-gentbl_cc_library(
-    name = "degine_pass_inc_gen",
-    strip_include_prefix = ".",
-    tbl_outs = [
-        (
-            [
-                "-gen-pass-decls",
-            ],
-            "Passes.h.inc",
-        ),
-    ],
-    tblgen = "@llvm-project//mlir:mlir-tblgen",
-    td_file = "Passes.td",
-    deps = ["@llvm-project//mlir:PassBaseTdFiles"],
-)
-
-cc_library(
-    name = "degine_passes",
-    srcs = ["Passes.cc"],
-    hdrs = [
-        "Passes.h",
-    ],
-    deps = [
-        "@llvm-project//mlir:FuncDialect",
-        "@llvm-project//mlir:Pass",
-        ":degine_pass_inc_gen"
-    ],
-)
-
-
 cc_binary(
     name = "degine-opt",
     srcs = glob(["*.cc"]),
@@ -43,6 +11,6 @@ cc_binary(
         "@stablehlo//:tosa_passes",
         "@stablehlo//:interpreter_passes",
         "@stablehlo//:register",
-        ":degine_passes",
+        "//degine/transforms:degine_passes",
     ],
 )

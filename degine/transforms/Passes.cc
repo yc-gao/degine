@@ -8,7 +8,7 @@ namespace mlir {
 namespace degine {
 
 #define GEN_PASS_DEF_DEGINEDEMOPASS
-#include "degine/tools/degine-opt/Passes.h.inc"
+#include "degine/transforms/Passes.h.inc"
 
 struct DemoPass : public impl::DegineDemoPassBase<DemoPass> {
   using DegineDemoPassBase::DegineDemoPassBase;

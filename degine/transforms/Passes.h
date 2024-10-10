@@ -10,7 +10,7 @@ namespace degine {
 
 #define GEN_PASS_DECL
 #define GEN_PASS_REGISTRATION
-#include "degine/tools/degine-opt/Passes.h.inc"
+#include "degine/transforms/Passes.h.inc"
 
 } // namespace degine
 } // namespace mlir

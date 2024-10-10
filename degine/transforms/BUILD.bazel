@@ -1,0 +1,35 @@
+load("@llvm-project//mlir:tblgen.bzl", "gentbl_cc_library", "gentbl_filegroup", "td_library")
+
+package(default_visibility = ["//visibility:public"])
+
+gentbl_cc_library(
+    name = "degine_pass_inc_gen",
+    strip_include_prefix = ".",
+    tbl_outs = [
+        (
+            [
+                "-gen-pass-decls",
+            ],
+            "Passes.h.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = "Passes.td",
+    deps = ["@llvm-project//mlir:PassBaseTdFiles"],
+)
+
+cc_library(
+    name = "degine_passes",
+    srcs = ["Passes.cc"],
+    hdrs = [
+        "Passes.h",
+    ],
+    deps = [
+        "@llvm-project//mlir:FuncDialect",
+        "@llvm-project//mlir:Pass",
+        ":degine_pass_inc_gen"
+    ],
+)
+
+
+

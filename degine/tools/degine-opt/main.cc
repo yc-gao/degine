@@ -9,7 +9,7 @@
 #include "stablehlo/reference/InterpreterPasses.h"
 #include "stablehlo/transforms/Passes.h"
 
-#include "degine/tools/degine-opt/Passes.h"
+#include "degine/transforms/Passes.h"
 
 int main(int argc, char **argv) {
   mlir::registerAllPasses();
