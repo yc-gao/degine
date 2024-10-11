@@ -1,8 +1,6 @@
 load("@protobuf//bazel:proto_library.bzl", "proto_library")
 load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
 
-package(default_visibility = ["//visibility:public"])
-
 proto_library(
     name = "onnx_proto",
     srcs = ["onnx.proto"],
@@ -14,12 +12,20 @@ cc_proto_library(
 )
 
 cc_library(
-    name = "ir",
+    name = "headers",
     hdrs = glob(["*.h"]),
+)
+
+cc_binary(
+    name = "demo",
     srcs = glob(["*.cc"]),
     deps = [
+        "@boost.core",
         "@boost.range",
+        "@boost.preprocessor",
         "@fmt",
         ":onnx_cc_proto",
-    ]
+        ":headers",
+    ],
 )
+

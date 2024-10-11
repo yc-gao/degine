@@ -11,7 +11,7 @@
 #include "boost/preprocessor/cat.hpp"
 #include "boost/range/counting_range.hpp"
 
-#include "degine/common/KernelRegistry.h"
+#include "KernelRegistry.h"
 
 class CpuInferSession;
 class OpInfo;

@@ -3,9 +3,9 @@
 
 #include "fmt/base.h"
 
-#include "degine/cpu/CpuInferSession.h"
-#include "degine/ir/GraphModule.h"
-#include "degine/ir/onnx.pb.h"
+#include "CpuInferSession.h"
+#include "GraphModule.h"
+#include "degine/proposal/runtime/onnx.pb.h"
 
 int main(int argc, char *argv[]) {
   onnx::ModelProto model_pb;

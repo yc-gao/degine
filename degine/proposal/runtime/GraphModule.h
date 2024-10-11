@@ -16,7 +16,7 @@
 #include "boost/range/join.hpp"
 #include "fmt/format.h"
 
-#include "degine/ir/onnx.pb.h"
+#include "degine/proposal/runtime/onnx.pb.h"
 
 class OperandInfo {
   static constexpr std::array dtype2size = {

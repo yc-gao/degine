@@ -6,8 +6,8 @@
 
 #include "fmt/format.h"
 
-#include "degine/cpu/OpKernel.h"
-#include "degine/ir/GraphModule.h"
+#include "OpKernel.h"
+#include "GraphModule.h"
 
 class CpuInferSession {
 public:

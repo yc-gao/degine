@@ -1,9 +1,9 @@
 #include "boost/range/adaptor/transformed.hpp"
 #include "boost/range/algorithm/copy.hpp"
 
-#include "degine/cpu/CpuInferSession.h"
-#include "degine/cpu/OpKernel.h"
-#include "degine/ir/GraphModule.h"
+#include "CpuInferSession.h"
+#include "OpKernel.h"
+#include "GraphModule.h"
 
 OpKernel::OpKernel(CpuInferSession &sess, const OpInfo &opinfo) {
   for (auto s = 0ul, e = opinfo.InputCount(); s < e; s++) {
