@@ -1,5 +1,5 @@
 include "mlir/Pass/PassBase.td"
 
-def DegineRankedTensorBufferizePass : Pass<"ranked-tensor-bufferize", "func::FuncOp"> {
+def DegineMemAllocToGlobalPass : Pass<"memalloc-to-global", "func::FuncOp"> {
 }
 
