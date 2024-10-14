@@ -254,7 +254,7 @@
     },
     "//3rdparty/triton:extensions.bzl%triton": {
       "general": {
-        "bzlTransitiveDigest": "rv+CGhFb1AeT6SSk5QXEUtzP8Sjf5JzllPpdec9gJLE=",
+        "bzlTransitiveDigest": "yZ4a+ll11HhSc2atYzaWkAGyCmlo6du0PNXfD2KfJ14=",
         "usagesDigest": "51nYCcWgcXhvvEMtXxy1Sh0pf9K1zBIkD0H5tKceJnw=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
@@ -272,6 +272,7 @@
               "urls": [
                 "https://github.com/triton-lang/triton/archive/c120c4cc067d002c508f960d1b501d28342d417b.zip"
               ],
+              "sha256": "bb119c472b7f2eb10b59d05fc061c4d014adfc38bb6f5e0b826d7da940412958",
               "strip_prefix": "triton-c120c4cc067d002c508f960d1b501d28342d417b",
               "build_file_content": "# empty"
             }
