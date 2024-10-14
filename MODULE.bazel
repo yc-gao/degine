@@ -18,6 +18,9 @@ http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "ht
 llvm = use_extension("//3rdparty/llvm:extensions.bzl", "llvm")
 use_repo(llvm, "llvm-raw", "llvm-project")
 
+triton = use_extension("//3rdparty/triton:extensions.bzl", "triton")
+use_repo(triton, "triton-raw")
+
 http_archive(
     name = "stablehlo",
     urls = [
