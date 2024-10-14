@@ -254,7 +254,7 @@
     },
     "//3rdparty/triton:extensions.bzl%triton": {
       "general": {
-        "bzlTransitiveDigest": "2XQNsgXhfequA+GQooE8z2UNEHprVXxhU24s8YJWRfs=",
+        "bzlTransitiveDigest": "I9I0jT5TXRYYOh+4p+Ybl3Oq0c5mK/yEv84kePrZVvg=",
         "usagesDigest": "51nYCcWgcXhvvEMtXxy1Sh0pf9K1zBIkD0H5tKceJnw=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
