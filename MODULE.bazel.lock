@@ -252,6 +252,41 @@
         ]
       }
     },
+    "//3rdparty/triton:extensions.bzl%triton": {
+      "general": {
+        "bzlTransitiveDigest": "2XQNsgXhfequA+GQooE8z2UNEHprVXxhU24s8YJWRfs=",
+        "usagesDigest": "51nYCcWgcXhvvEMtXxy1Sh0pf9K1zBIkD0H5tKceJnw=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "triton": {
+            "bzlFile": "@@//3rdparty/triton:workspace.bzl",
+            "ruleClassName": "triton_configure",
+            "attributes": {}
+          },
+          "triton-raw": {
+            "bzlFile": "@@bazel_tools//tools/build_defs/repo:http.bzl",
+            "ruleClassName": "http_archive",
+            "attributes": {
+              "urls": [
+                "https://github.com/triton-lang/triton/archive/refs/tags/v2.1.0.tar.gz"
+              ],
+              "sha256": "4338ca0e80a059aec2671f02bfc9320119b051f378449cf5f56a1273597a3d99",
+              "strip_prefix": "triton-2.1.0",
+              "build_file_content": "# empty"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "",
+            "bazel_tools",
+            "bazel_tools"
+          ]
+        ]
+      }
+    },
     "@@apple_support~//crosstool:setup.bzl%apple_cc_configure_extension": {
       "general": {
         "bzlTransitiveDigest": "Co35oEwSoYZFy42IHjYfE7VkKR1WykyxhRlbUGSa3XA=",

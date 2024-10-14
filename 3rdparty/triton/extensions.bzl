@@ -1,4 +1,5 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("//3rdparty/triton:workspace.bzl", "triton_configure")
 
 def impl_(ctx):
     http_archive(
@@ -10,6 +11,7 @@ def impl_(ctx):
         strip_prefix = "triton-2.1.0",
         build_file_content = "# empty",
     )
+    triton_configure(name = "triton")
 
 
 triton = module_extension(
