@@ -5,10 +5,10 @@ def impl_(ctx):
     http_archive(
         name = "llvm-raw",
         urls = [
-            "https://github.com/llvm/llvm-project/archive/585523750e2bbe374d1cb3bf4ff9d53de29b9593.zip",
+            "https://github.com/llvm/llvm-project/archive/df0864e761107b07e38f5503e0cbee0cebb4c5e8.zip",
         ],
-        sha256 = "98932f826a6f4b3c0bb929c8b28b7278232273bee7667a3a31019cab917372a3",
-        strip_prefix = "llvm-project-585523750e2bbe374d1cb3bf4ff9d53de29b9593",
+        sha256 = "cd31721d540164019c8470be1343d149feb27dcdb3ad59ff22a786391d0c89a1",
+        strip_prefix = "llvm-project-df0864e761107b07e38f5503e0cbee0cebb4c5e8",
         build_file_content = "# empty",
     )
     http_archive(

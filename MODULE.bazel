@@ -13,19 +13,19 @@ bazel_dep(name = "fmt", version = "11.0.2")
 bazel_dep(name = "nlohmann_json", version = "3.11.3")
 bazel_dep(name = "protobuf", version = "28.2")
 
-http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-
 llvm = use_extension("//3rdparty/llvm:extensions.bzl", "llvm")
 use_repo(llvm, "llvm-raw", "llvm-project")
 
 triton = use_extension("//3rdparty/triton:extensions.bzl", "triton")
 use_repo(triton, "triton-raw", "triton")
 
-http_archive(
-    name = "stablehlo",
-    urls = [
-        "https://github.com/openxla/stablehlo/archive/c28d55e91b4a5daaff18a33ce7e9bbd0f171256a.zip",
-    ],
-    sha256 = "e9e2456e352a1169345bf128a7baab2232b33ae111ecc59a6b356f2aaac0a71f",
-    strip_prefix = "stablehlo-c28d55e91b4a5daaff18a33ce7e9bbd0f171256a",
-)
+# http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# http_archive(
+#     name = "stablehlo",
+#     urls = [
+#         "https://github.com/openxla/stablehlo/archive/c28d55e91b4a5daaff18a33ce7e9bbd0f171256a.zip",
+#     ],
+#     sha256 = "e9e2456e352a1169345bf128a7baab2232b33ae111ecc59a6b356f2aaac0a71f",
+#     strip_prefix = "stablehlo-c28d55e91b4a5daaff18a33ce7e9bbd0f171256a",
+# )

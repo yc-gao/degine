@@ -5,10 +5,10 @@ def impl_(ctx):
     http_archive(
         name = "triton-raw",
         urls = [
-            "https://github.com/triton-lang/triton/archive/refs/tags/v2.1.0.tar.gz",
+            "https://github.com/triton-lang/triton/archive/c120c4cc067d002c508f960d1b501d28342d417b.zip",
         ],
-        sha256 = "4338ca0e80a059aec2671f02bfc9320119b051f378449cf5f56a1273597a3d99",
-        strip_prefix = "triton-2.1.0",
+        sha256 = "bb119c472b7f2eb10b59d05fc061c4d014adfc38bb6f5e0b826d7da940412958",
+        strip_prefix = "triton-c120c4cc067d002c508f960d1b501d28342d417b",
         build_file_content = "# empty",
     )
     triton_configure(name = "triton")
