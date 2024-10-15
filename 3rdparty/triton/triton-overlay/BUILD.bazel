@@ -24,7 +24,7 @@ td_library(
 )
 
 gentbl_cc_library(
-    name = "MLIRTritonOpsIncGen",
+    name = "TritonMLIRTritonOpsIncGen",
     strip_include_prefix = "include",
     tbl_outs = [
         (
@@ -53,25 +53,6 @@ gentbl_cc_library(
             ["-gen-typedef-defs"],
             "include/triton/Dialect/Triton/IR/Types.cpp.inc",
         ),
-
-        (
-            ["-gen-attr-interface-decls"],
-            "include/triton/Dialect/Triton/IR/AttrInterfaces.h.inc",
-        ),
-        (
-            ["-gen-attr-interface-defs"],
-            "include/triton/Dialect/Triton/IR/AttrInterfaces.cpp.inc",
-        ),
-
-        (
-            ["-gen-type-interface-decls"],
-            "include/triton/Dialect/Triton/IR/TritonTypeInterfaces.h.inc",
-        ),
-        (
-            ["-gen-type-interface-defs"],
-            "include/triton/Dialect/Triton/IR/TritonTypeInterfaces.cpp.inc",
-        ),
-
         (
             ["-gen-dialect-decls"],
             "include/triton/Dialect/Triton/IR/Dialect.h.inc",
@@ -83,6 +64,46 @@ gentbl_cc_library(
     ],
     tblgen = "@llvm-project//mlir:mlir-tblgen",
     td_file = "include/triton/Dialect/Triton/IR/TritonOps.td",
+    deps = [
+        ":MLIRTritonOpsIncGenTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "TritonMLIRTritonAttrInterfacesIncGen",
+    strip_include_prefix = "include",
+    tbl_outs = [
+        (
+            ["-gen-attr-interface-decls"],
+            "include/triton/Dialect/Triton/IR/AttrInterfaces.h.inc",
+        ),
+        (
+            ["-gen-attr-interface-defs"],
+            "include/triton/Dialect/Triton/IR/AttrInterfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = "include/triton/Dialect/Triton/IR/TritonInterfaces.td",
+    deps = [
+        ":MLIRTritonOpsIncGenTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "TritonMLIRTritonTypeInterfacesIncGen",
+    strip_include_prefix = "include",
+    tbl_outs = [
+        (
+            ["-gen-type-interface-decls"],
+            "include/triton/Dialect/Triton/IR/TritonTypeInterfaces.h.inc",
+        ),
+        (
+            ["-gen-type-interface-defs"],
+            "include/triton/Dialect/Triton/IR/TritonTypeInterfaces.cpp.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = "include/triton/Dialect/Triton/IR/TritonTypeInterfaces.td",
     deps = [
         ":MLIRTritonOpsIncGenTdFiles",
     ],
@@ -104,7 +125,7 @@ td_library(
 )
 
 gentbl_cc_library(
-    name = "MLIRTritonGPUOpsIncGen",
+    name = "TritonMLIRTritonGPUOpsIncGen",
     strip_include_prefix = "include",
     tbl_outs = [
         (
@@ -135,20 +156,11 @@ gentbl_cc_library(
         ),
 
         (
-            ["-gen-attr-interface-decls"],
-            "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrInterfaces.h.inc",
-        ),
-        (
-            ["-gen-attr-interface-defs"],
-            "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrInterfaces.cpp.inc",
-        ),
-
-        (
-            ["-gen-attrdef-decls", "-attrdefs-dialect=triton_gpu"],
+            ["-gen-attrdef-decls", "--attrdefs-dialect=triton_gpu"],
             "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.h.inc",
         ),
         (
-            ["-gen-attrdef-defs", "-attrdefs-dialect=triton_gpu"],
+            ["-gen-attrdef-defs", "--attrdefs-dialect=triton_gpu"],
             "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.cpp.inc",
         ),
 
@@ -164,6 +176,27 @@ gentbl_cc_library(
     ],
     tblgen = "@llvm-project//mlir:mlir-tblgen",
     td_file = "include/triton/Dialect/TritonGPU/IR/TritonGPUOps.td",
+    deps = [
+        ":MLIRTritonGPUOpsIncGenTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "TritonMLIRTritonGPUAttrInterfacesIncGen",
+    strip_include_prefix = "include",
+    tbl_outs = [
+        (
+            ["-gen-attr-interface-decls"],
+            "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrInterfaces.h.inc",
+        ),
+        (
+            ["-gen-attr-interface-defs"],
+            "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrInterfaces.cpp.inc",
+        ),
+
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = "include/triton/Dialect/TritonGPU/IR/TritonGPUAttrDefs.td",
     deps = [
         ":MLIRTritonGPUOpsIncGenTdFiles",
     ],
@@ -186,7 +219,7 @@ td_library(
 )
 
 gentbl_cc_library(
-    name = "MLIRTritonNvidiaGPUOpsIncGen",
+    name = "TritonMLIRTritonNvidiaGPUOpsIncGen",
     strip_include_prefix = "include",
     tbl_outs = [
         (
@@ -259,28 +292,30 @@ cc_library(
         "@llvm-project//mlir:GPUDialect",
         "@llvm-project//mlir:LLVMCommonConversion",
         ":TritonMLIRHeaders",
-        ":MLIRTritonOpsIncGen",
-        ":MLIRTritonGPUOpsIncGen",
-        ":MLIRTritonNvidiaGPUOpsIncGen",
+        ":TritonMLIRTritonOpsIncGen",
+        ":TritonMLIRTritonTypeInterfacesIncGen",
+        ":TritonMLIRTritonAttrInterfacesIncGen",
+        ":TritonMLIRTritonGPUOpsIncGen",
+        ":TritonMLIRTritonGPUAttrInterfacesIncGen",
+        ":TritonMLIRTritonNvidiaGPUOpsIncGen",
     ]
 )
 
 cc_library(
     name = "TritonMLIRTritonDialect",
     srcs = glob([
-        "lib/Dialect/TritonGPU/IR/*.cpp",
         "lib/Dialect/Triton/IR/*.cpp"
     ]),
     strip_include_prefix = "include",
     deps = [
         "@llvm-project//mlir:IR",
-        "@llvm-project//mlir:ArithDialect",
         "@llvm-project//mlir:GPUDialect",
         "@llvm-project//mlir:FuncDialect",
         "@llvm-project//mlir:MathDialect",
         ":TritonMLIRHeaders",
-        ":MLIRTritonOpsIncGen",
-        ":MLIRTritonGPUOpsIncGen",
+        ":TritonMLIRTritonOpsIncGen",
+        ":TritonMLIRTritonTypeInterfacesIncGen",
+        ":TritonMLIRTritonAttrInterfacesIncGen",
     ],
 )
 
