@@ -195,7 +195,7 @@
   "moduleExtensions": {
     "//3rdparty/llvm:extensions.bzl%llvm": {
       "general": {
-        "bzlTransitiveDigest": "ZfZ1ykCpz6HYIrIDZDgtszVGPkRthE6TYZbsjk3SeSs=",
+        "bzlTransitiveDigest": "4D412j74mP12qn2kbKND/KyyYCS/1tt7UulTO9VkIg4=",
         "usagesDigest": "UFIiGqY0nG0GLFKX/k9l0pU3GT5OYZnAneRDvGiofc0=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
