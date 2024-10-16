@@ -341,6 +341,82 @@ cc_library(
         ":TritonMLIRTritonNvidiaGPUOpsIncGen",
     ],
 )
+
+td_library(
+    name = "TritonMLIRTritonPassIncGenTdFiles",
+    srcs = glob([
+        "include/triton/Dialect/Triton/Transforms/*.td",
+    ]),
+    includes = ["include"],
+    deps = [
+        "@llvm-project//mlir:PassBaseTdFiles",
+        # "@llvm-project//mlir:ArithOpsTdFiles",
+        # "@llvm-project//mlir:DestinationStyleOpInterfaceTdFiles",
+        # "@llvm-project//mlir:ViewLikeInterfaceTdFiles",
+    ],
+)
+
+
+gentbl_cc_library(
+    name = "TritonMLIRTritonPassIncGen",
+    strip_include_prefix = "include",
+    tbl_outs = [
+        (
+            ["-gen-pass-decls", "-name", "Triton"],
+            "include/triton/Dialect/Triton/Transforms/Passes.h.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = "include/triton/Dialect/Triton/Transforms/Passes.td",
+    deps = [
+        ":TritonMLIRTritonPassIncGenTdFiles",
+    ],
+)
+
+td_library(
+    name = "TritonMLIRTritonCombineIncGenGenTdFiles",
+    srcs = glob([
+        "lib/Dialect/Triton/Transforms/Combine.td",
+    ]),
+    deps = [
+        "@llvm-project//mlir:PassBaseTdFiles",
+        "@llvm-project//mlir:ArithOpsTdFiles",
+        ":TritonMLIRTritonOpsIncGenTdFiles",
+    ],
+)
+
+gentbl_cc_library(
+    name = "TritonMLIRTritonCombineIncGen",
+    strip_include_prefix = "lib/Dialect/Triton/Transforms",
+    tbl_outs = [
+        (
+            ["-gen-rewriters"],
+            "lib/Dialect/Triton/Transforms/TritonCombine.inc",
+        ),
+    ],
+    tblgen = "@llvm-project//mlir:mlir-tblgen",
+    td_file = "lib/Dialect/Triton/Transforms/Combine.td",
+    deps = [
+        ":TritonMLIRTritonCombineIncGenGenTdFiles",
+    ],
+)
+
+cc_library(
+    name = "TritonMLIRTritonTransforms",
+    srcs = glob([
+        "lib/Dialect/Triton/Transforms/*.cpp",
+    ]),
+    strip_include_prefix = "include",
+    deps = [
+        "@llvm-project//mlir:IR",
+        "@llvm-project//mlir:ControlFlowDialect",
+        "@llvm-project//mlir:SCFUtils",
+        ":TritonMLIRTritonDialect",
+        ":TritonMLIRTritonPassIncGen",
+        ":TritonMLIRTritonCombineIncGen",
+    ],
+)
+
 # cc_library(
 #     name = "TritonMLIRAnalysis",
 #     srcs = glob([
