@@ -1,5 +1,9 @@
 include "mlir/Pass/PassBase.td"
 
-def DegineMemAllocToGlobalPass : Pass<"memalloc-to-global", "func::FuncOp"> {
+def AsyncFromDataFlowPass: Pass<"async-from-dataflow", "func::FuncOp"> {
+    let dependentDialects = [
+        "func::FuncDialect",
+        "async::AsyncDialect"
+    ];
 }
 
