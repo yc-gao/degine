@@ -4,6 +4,7 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/Operation.h"
+#include "mlir/IR/Value.h"
 #include "mlir/IR/ValueRange.h"
 #include "mlir/Pass/Pass.h"
 #include "llvm/ADT/STLExtras.h"
@@ -53,40 +54,43 @@ struct AsyncFromDataFlowPass
     }
   }
 
+  void eliminateAwaitOp() {
+    mlir::func::FuncOp func_op = getOperation();
+    llvm::SmallVector<mlir::Operation *, 8> ops;
+
+    func_op.walk([&](mlir::async::AwaitOp op) {
+      mlir::async::ExecuteOp defined_op =
+          op.getOperand().getDefiningOp<mlir::async::ExecuteOp>();
+      bool all_execute = true;
+      for (mlir::Operation *user : op.getResult().getUsers()) {
+        mlir::async::ExecuteOp user_op =
+            user->getParentOfType<mlir::async::ExecuteOp>();
+        if (!user_op) {
+          all_execute = false;
+          continue;
+        }
+        user_op.getDependenciesMutable().append(defined_op.getToken());
+        user_op.getBodyOperandsMutable().append(op.getOperand());
+        user_op.getBody()->addArgument(op.getResult().getType(), op.getLoc());
+        op.getResult().replaceUsesWithIf(
+            user_op.getBody()->getArguments().back(),
+            [&](mlir::OpOperand &operand) -> bool {
+              return operand.getOwner()
+                         ->getParentOfType<mlir::async::ExecuteOp>() == user_op;
+            });
+      }
+      if (all_execute) {
+        ops.push_back(op);
+      }
+    });
+    for (auto op : ops) {
+      op->erase();
+    }
+  }
+
   void runOnOperation() override {
     wrapOpUsingExecuteOp();
-
-    // mlir::func::FuncOp func_op = getOperation();
-    // mlir::OpBuilder builder(func_op.getRegion());
-    //
-    // mlir::arith::ConstantOp const_op =
-    //     builder.create<mlir::arith::ConstantIndexOp>(func_op.getLoc(), 0);
-    //
-    // mlir::async::ExecuteOp execute_op =
-    // builder.create<mlir::async::ExecuteOp>(
-    //     func_op.getLoc(), mlir::TypeRange{builder.getIndexType()},
-    //     mlir::ValueRange{}, mlir::ValueRange{});
-    // {
-    //   mlir::OpBuilder::InsertionGuard guard(builder);
-    //   builder.setInsertionPointToEnd(execute_op.getBody());
-    //   mlir::arith::ConstantIndexOp constant_op =
-    //       builder.create<mlir::arith::ConstantIndexOp>(func_op.getLoc(), 0);
-    //   builder.create<mlir::async::YieldOp>(func_op.getLoc(),
-    //                                        constant_op.getResult());
-    // }
-    //
-    // mlir::async::ExecuteOp execute_op1 =
-    // builder.create<mlir::async::ExecuteOp>(
-    //     func_op.getLoc(), mlir::TypeRange{},
-    //     mlir::ValueRange{execute_op.getToken()},
-    //     execute_op.getBodyResults());
-    // {
-    //   mlir::OpBuilder::InsertionGuard guard(builder);
-    //   builder.setInsertionPointToStart(execute_op1.getBody());
-    //   builder.create<mlir::arith::AddIOp>(
-    //       func_op.getLoc(), builder.getIndexType(),
-    //       execute_op1.getBody()->getArgument(0), const_op.getResult());
-    // }
+    eliminateAwaitOp();
   }
 };
 
