@@ -56,7 +56,6 @@ struct AsyncFromDataFlowPass
 
   void eliminateAwaitOp() {
     mlir::func::FuncOp func_op = getOperation();
-    llvm::SmallVector<mlir::Operation *, 8> ops;
 
     func_op.walk([&](mlir::async::AwaitOp op) {
       mlir::async::ExecuteOp defined_op =
@@ -80,12 +79,9 @@ struct AsyncFromDataFlowPass
             });
       }
       if (all_execute) {
-        ops.push_back(op);
+        op->erase();
       }
     });
-    for (auto op : ops) {
-      op->erase();
-    }
   }
 
   void runOnOperation() override {
