@@ -4,10 +4,13 @@
 #include "mlir/Dialect/Func/IR/FuncOps.h"
 #include "mlir/IR/Builders.h"
 #include "mlir/IR/Operation.h"
+#include "mlir/IR/Region.h"
 #include "mlir/IR/Value.h"
 #include "mlir/IR/ValueRange.h"
 #include "mlir/Pass/Pass.h"
+#include "mlir/Transforms/RegionUtils.h"
 #include "llvm/ADT/STLExtras.h"
+#include "llvm/ADT/iterator.h"
 
 namespace mlir {
 namespace degine {
@@ -19,24 +22,23 @@ struct AsyncFromDataFlowPass
     : public impl::AsyncFromDataFlowPassBase<AsyncFromDataFlowPass> {
   using AsyncFromDataFlowPassBase::AsyncFromDataFlowPassBase;
 
-  void wrapOpUsingExecuteOp() {
-    mlir::func::FuncOp func_op = getOperation();
-    llvm::SmallVector<mlir::Operation *, 8> worklist;
-    for (mlir::Operation &op : func_op.getOps()) {
-      if (op.hasTrait<mlir::OpTrait::IsTerminator>()) {
-        continue;
-      }
-      if (mlir::isa<mlir::async::ExecuteOp>(op)) {
-        continue;
-      }
-      if (mlir::isa<mlir::async::AwaitOp>(op)) {
-        continue;
-      }
-      worklist.push_back(&op);
-    }
+  void makeOpsAsync(mlir::Region &region) {
+
+    llvm::SmallVector<mlir::Operation *, 8> worklist(llvm::make_pointer_range(
+        llvm::make_filter_range(region.getOps(), [](mlir::Operation &op) {
+          if (op.hasTrait<mlir::OpTrait::IsTerminator>()) {
+            return false;
+          }
+          if (mlir::isa<mlir::async::ExecuteOp>(op)) {
+            return false;
+          }
+          if (mlir::isa<mlir::async::AwaitOp>(op)) {
+            return false;
+          }
+          return true;
+        })));
 
     for (mlir::Operation *op : worklist) {
-
       mlir::OpBuilder builder(op);
       mlir::async::ExecuteOp execute_op =
           builder.create<mlir::async::ExecuteOp>(
@@ -55,9 +57,7 @@ struct AsyncFromDataFlowPass
   }
 
   void eliminateAwaitOp() {
-    mlir::func::FuncOp func_op = getOperation();
-
-    func_op.walk([&](mlir::async::AwaitOp op) {
+    getOperation().walk([&](mlir::async::AwaitOp op) {
       mlir::async::ExecuteOp defined_op =
           op.getOperand().getDefiningOp<mlir::async::ExecuteOp>();
       bool all_execute = true;
@@ -71,12 +71,9 @@ struct AsyncFromDataFlowPass
         user_op.getDependenciesMutable().append(defined_op.getToken());
         user_op.getBodyOperandsMutable().append(op.getOperand());
         user_op.getBody()->addArgument(op.getResult().getType(), op.getLoc());
-        op.getResult().replaceUsesWithIf(
-            user_op.getBody()->getArguments().back(),
-            [&](mlir::OpOperand &operand) -> bool {
-              return operand.getOwner()
-                         ->getParentOfType<mlir::async::ExecuteOp>() == user_op;
-            });
+        mlir::replaceAllUsesInRegionWith(
+            op.getResult(), user_op.getBody()->getArguments().back(),
+            user_op.getRegion());
       }
       if (all_execute) {
         op->erase();
@@ -85,7 +82,7 @@ struct AsyncFromDataFlowPass
   }
 
   void runOnOperation() override {
-    wrapOpUsingExecuteOp();
+    makeOpsAsync(getOperation().getRegion());
     eliminateAwaitOp();
   }
 };
