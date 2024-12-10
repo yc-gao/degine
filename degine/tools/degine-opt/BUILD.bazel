@@ -12,6 +12,7 @@ cc_binary(
         "@stablehlo//:stablehlo_passes",
         "@stablehlo//:linalg_passes",
         "@stablehlo//:tosa_passes",
+        "//degine/transforms:degine_passes",
     ]
 )
 
