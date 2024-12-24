@@ -2,5 +2,10 @@ package(default_visibility = ["//visibility:public"])
 
 cc_binary(
     name = 'demo',
-    srcs = ['demo.cc']
+    srcs = ['demo.cc'],
+    deps = [
+        "@llvm-project//mlir:AllPassesAndDialects",
+        "@llvm-project//mlir:AllExtensions",
+        "@llvm-project//mlir:AllTranslations",
+    ]
 )
