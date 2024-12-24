@@ -1,0 +1,8 @@
+bazel-bin
+bazel-degine
+bazel-out
+bazel-testlogs
+
+.cache
+compile_flags.txt
+

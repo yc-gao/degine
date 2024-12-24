@@ -1,0 +1,16 @@
+module(name = "degine", version = "0.0.1")
+
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "platforms", version = "0.0.10")
+
+bazel_dep(name = "rules_cc", version = "0.0.12")
+bazel_dep(name = "rules_python", version = "1.0.0-rc2")
+
+bazel_dep(name = "boost.core", version = "1.83.0")
+bazel_dep(name = "boost.range", version = "1.83.0")
+bazel_dep(name = "boost.preprocessor", version = "1.83.0")
+
+bazel_dep(name = "fmt", version = "11.0.2")
+bazel_dep(name = "nlohmann_json", version = "3.11.3")
+bazel_dep(name = "protobuf", version = "28.2")
+
